@@ -1,3 +1,7 @@
+import numpy as np
+import pandas as pd
+print("Imported the package here")
+
 min_rate = 0
 max_rate = 0
 
@@ -28,6 +32,7 @@ def npv(seq_of_rates: np.array, data: pd.DataFrame) -> tuple:
 
 def xirr(data: pd.DataFrame) -> float:
     # Finding out which column contains Date and Amount
+    print("Calculating the XIRR now")
     try:
         data.iloc[:, 0].astype(float)
         col_names = ['Amount', 'Date']
