@@ -11,13 +11,11 @@ import io
 from dateutil.relativedelta import relativedelta
 from nsepy.urls import equity_symbol_list_url, index_constituents_url
 from utils.getHistData import getHistDatanow
-df = getHistDatanow("TCS")
-
-
-print(df.to_string())
 
 #phase 1 - > import the list of top 500 companies listed on NSE by market cap
-#import the historical data for 1year
+
+getHistDatanow("WIPRO")
+
 #run ST7(2/3)
 #generate suggestion file
 #phase2 - > check for the ST
