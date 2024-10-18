@@ -1,7 +1,7 @@
-from utils import xirr
+from utils import *
 print("Hello world")
 '''
-#phase 1 - > import the list of top 500 companies listed on NSe by marcket cap
+#phase 1 - > import the list of top 500 companies listed on NSE by market cap
 #import the historical data for 1year
 #run ST7(2/3)
 #generate suggestion file
