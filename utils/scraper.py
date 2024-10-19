@@ -122,9 +122,9 @@ def format_dataframe_result(result):
                         "CH_52WEEK_LOW_PRICE"]
     result = result[columns_required]
     result = result.set_axis(
-        ['Date', 'Symbol', 'Series', 'High Price', 'Low Price', 'Open Price', 'Close Price', 'Last Price',
-         'Prev Close Price', 'Total Traded Quantity', 'Total Traded Value', '52 Week High Price',
+        ['datetime', 'Symbol', 'Series', 'high', 'low', 'open', 'close', 'Last Price',
+         'Prev Close Price', 'volume', 'Total Traded Value', '52 Week High Price',
          '52 Week Low Price'], axis=1)
-    result.set_index('Date', inplace=True)
-    result.sort_index(inplace=True)
+    result.set_index('datetime', inplace=True)
+    result.sort_index(inplace=True, ascending=False)
     return result
