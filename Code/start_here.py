@@ -11,21 +11,31 @@ import io
 from dateutil.relativedelta import relativedelta
 from nsepy.urls import equity_symbol_list_url, index_constituents_url
 from utils.getHistData import getHistDatanow
-from utils.st73 import *
+#from utils.st73 import *
 cwd = os.getcwd()
 
 #phase 1 - > import the list of top 500 companies listed on NSE by market cap
+
+failed_to_get_data = []
+successful_to_get_data = []
 for ticker in ['TCS']:
-    df = getHistDatanow(ticker)
-    #ticker_st73 = st73()
-cols = ['open', 'high', 'low', 'close', 'volume']
-st_df = df[cols]
-print(st_df.to_string())
-new_path_st = '\\'.join(cwd.split('\\')[:-1]) + "\\data\\historicalData\\" + ticker + "_st.csv"
-st_df.to_csv(new_path_st)
-st, upt, dt = get_supertrend(st_df)
-#st73_df = df[cols]
-#run ST7(2/3)
+    try:
+        print(f"Starting the process for {ticker}")
+        df = getHistDatanow(ticker)
+        successful_to_get_data.append[ticker]
+        cols = ['Date', 'Open Price', 'High Price', 'Low Price', 'Close Price', 'Total Traded Quantity']
+        df = df[cols]
+        df = df.rename(columns={'Date': 'date', 'Open Price': 'open', 'High Price': 'high', 'Close Price': 'close',
+                                    'Low Price': 'low', 'Total Traded Quantity': 'volume'})
+        df['date'] = pd.to_datetime(df['date'], format='mixed')
+        df['date'] = df['date'].dt.date
+        df.drop_duplicates(inplace=True)
+        supertrend_value = st_value(df, length=7, multiplier=3)
+
+    except Exception as e:
+        failed_to_get_data.append[ticker]
+        print(f"ERROR: {e}")
+
 #generate suggestion file
 #phase2 - > check for the ST
 #generate GTT

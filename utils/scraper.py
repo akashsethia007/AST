@@ -126,5 +126,5 @@ def format_dataframe_result(result):
          'Prev Close Price', 'volume', 'Total Traded Value', '52 Week High Price',
          '52 Week Low Price'], axis=1)
     result.set_index('datetime', inplace=True)
-    result.sort_index(inplace=True, ascending=False)
+    result.sort_index(inplace=True)
     return result
