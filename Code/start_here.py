@@ -12,18 +12,17 @@ from dateutil.relativedelta import relativedelta
 from nsepy.urls import equity_symbol_list_url, index_constituents_url
 from utils.getHistData import getHistDatanow
 from utils.get500tickers import update500tickers
-#from utils.st_calculator import *
+
 cwd = os.getcwd()
 
 #phase 1 - > import the list of top 500 companies listed on NSE by market cap
 ticker_list = update500tickers()
 failed_to_get_data = []
 successful_to_get_data = []
-for ticker in ticket_list:
+for ticker in ticker_list:
     try:
-        print(f"Starting the process for {ticker}")
         df = getHistDatanow(ticker)
-        successful_to_get_data.append[ticker]
+        successful_to_get_data.append(ticker)
         cols = ['Date', 'Open Price', 'High Price', 'Low Price', 'Close Price', 'Total Traded Quantity']
         df = df[cols]
         df = df.rename(columns={'Date': 'date', 'Open Price': 'open', 'High Price': 'high', 'Close Price': 'close',
@@ -34,10 +33,9 @@ for ticker in ticket_list:
         supertrend_value = st_value(df, length=7, multiplier=3)
 
     except Exception as e:
-        failed_to_get_data.append[ticker]
-        print(f"ERROR: {e}")
+        failed_to_get_data.append(ticker)
+
 print(successful_to_get_data)
-print("Break")
 print(failed_to_get_data)
 #generate suggestion file
 #phase2 - > check for the ST

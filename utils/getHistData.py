@@ -14,9 +14,4 @@ def getHistDatanow(ticker):
     cwd = os.getcwd()
     new_path = '\\'.join(cwd.split('\\')[:-1]) + "\\data\\historicalData\\" + ticker + ".csv"
     df = stocks.get_data(stock_symbol=ticker, start_date=hist_date, end_date=today_date)
-    print("Saving the data to the data location now")
-    try:
-        df.to_csv(new_path)
-    except Exception as e:
-        print("Saving the files failed because of " + e )
     return df

@@ -9,7 +9,6 @@ def update500tickers():
     eq_symbol = list(eq['SYMBOL'] + '.NS')
     Market_Cap = []
     for symbol in eq_symbol:
-        print(f"checking for {symbol}")
         ticker = yf.Ticker(symbol)
         info = ticker.info
         market_cap = info.get('marketCap')
@@ -29,4 +28,3 @@ def update500tickers():
     file.close()
     print("Successfully updated the file")
     return final_list
-test = update500tickers()
