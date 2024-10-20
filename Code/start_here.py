@@ -11,11 +11,12 @@ import io
 from dateutil.relativedelta import relativedelta
 from nsepy.urls import equity_symbol_list_url, index_constituents_url
 from utils.getHistData import getHistDatanow
-#from utils.st73 import *
+from utils.get500tickers import update500tickers
+#from utils.st_calculator import *
 cwd = os.getcwd()
 
 #phase 1 - > import the list of top 500 companies listed on NSE by market cap
-
+ticker_list = update500tickers()
 failed_to_get_data = []
 successful_to_get_data = []
 for ticker in ['TCS']:
