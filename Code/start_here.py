@@ -12,19 +12,15 @@ from dateutil.relativedelta import relativedelta
 from nsepy.urls import equity_symbol_list_url, index_constituents_url
 from utils.getHistData import getHistDatanow
 from utils.get500tickers import update500tickers
+from utils.set_date import set_dates
 
 cwd = os.getcwd()
-
+today_date, hist_date = set_dates()
 #phase 1 - > import the list of top 500 companies listed on NSE by market cap
 ticker_list = update500tickers()
 failed_to_get_data = []
 successful_to_get_data = []
-print("Setting up the dates for this execution")
-date_now = datetime.date.today()
-years_to_add = date_now.year - 1
-today_date = date_now.strftime('%Y-%m-%d')
-hist_date = date_now.replace(year=years_to_add).strftime('%Y-%m-%d')
-print(f"Start date set to {today_date} and end date set to {hist_date}")
+
 for ticker in ticker_list:
     try:
         df = getHistDatanow(ticker,today_date, hist_date)
