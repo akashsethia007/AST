@@ -9,14 +9,15 @@ def update500tickers():
     eq_symbol = list(eq['SYMBOL'] + '.NS')
     Market_Cap = []
     for symbol in eq_symbol:
+        print(f"checking for {symbol}")
         ticker = yf.Ticker(symbol)
         info = ticker.info
         market_cap = info.get('marketCap')
         Market_Cap.append({"Symbol" : symbol, "Market_Cap":market_cap})
 
     print("Updated the list with MCAP, now taking only the TOP 500 companies")
-    mcap_df = pd.DataFrame(mcap)
-    mcap_df.sort_values('mcap', ascending=False, inplace=True)
+    mcap_df = pd.DataFrame(Market_Cap)
+    mcap_df.sort_values('Market_Cap', ascending=False, inplace=True)
     stock_list = mcap_df.head(500)
     stock_list = list(stock_list['Symbol'])
     final_list = [i.split('.', 1)[0] for i in stock_list]
@@ -28,3 +29,4 @@ def update500tickers():
     file.close()
     print("Successfully updated the file")
     return final_list
+test = update500tickers()
