@@ -114,7 +114,6 @@ def scrape_data(start_date, end_date, input_type, name):
 
     return format_dataframe_result(result)
 
-
 def format_dataframe_result(result):
     columns_required = ["TIMESTAMP", "CH_SYMBOL", "CH_SERIES", "CH_TRADE_HIGH_PRICE",
                         "CH_TRADE_LOW_PRICE", "CH_OPENING_PRICE", "CH_CLOSING_PRICE", "CH_LAST_TRADED_PRICE",
