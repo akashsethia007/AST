@@ -35,7 +35,7 @@ for ticker in ticker_list:
         df['date'] = df['date'].dt.date
         df.drop_duplicates(inplace=True)
         supertrend_value = st_value(df, length=7, multiplier=3)
-        gen_signal = generate_signal(ticker, supertrend_value)
+        #gen_signal = generate_signal(ticker, supertrend_value)
 
     except Exception as e:
         failed_to_get_data.append(ticker)
