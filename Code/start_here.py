@@ -19,7 +19,7 @@ cwd = os.getcwd()
 ticker_list = update500tickers()
 failed_to_get_data = []
 successful_to_get_data = []
-for ticker in ['TCS']:
+for ticker in ticket_list:
     try:
         print(f"Starting the process for {ticker}")
         df = getHistDatanow(ticker)
@@ -36,7 +36,9 @@ for ticker in ['TCS']:
     except Exception as e:
         failed_to_get_data.append[ticker]
         print(f"ERROR: {e}")
-
+print(successful_to_get_data)
+print("Break")
+print(failed_to_get_data)
 #generate suggestion file
 #phase2 - > check for the ST
 #generate GTT
