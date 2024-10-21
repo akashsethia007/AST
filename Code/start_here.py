@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from datetime import datetime,date
+from datetime import datetime, date
 from nsepy import get_history
 import os
 from nsepy.commons import URLFetch
@@ -17,11 +17,11 @@ from utils.gen_signal import generate_signal
 
 cwd = os.getcwd()
 today_date, hist_date = set_dates(60)
-#phase 1 - > import the list of top 500 companies listed on NSE by market cap
 #ticker_list = update500tickers()
 ticker_list = ['TCS','INFY','RELIANCE'] #Hardcoded for testing purpose
 failed_to_get_data = []
 successful_to_get_data = []
+cust_var = {}
 
 for ticker in ticker_list:
     try:
