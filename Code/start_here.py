@@ -26,7 +26,7 @@ indicator_signals = {}
 for ticker in ticker_list:
     try:
         df = getHistDatanow(ticker,today_date, hist_date)
-
+        df.drop_duplicates(inplace=True)
         successful_to_get_data.append(ticker)
         cols = ['Date', 'Open Price', 'High Price', 'Low Price', 'Close Price', 'Total Traded Quantity']
         df = df[cols]
@@ -34,11 +34,14 @@ for ticker in ticker_list:
                                     'Low Price': 'low', 'Total Traded Quantity': 'volume'})
         df['date'] = pd.to_datetime(df['date'], format='mixed')
         df['date'] = df['date'].dt.date
-        df.drop_duplicates(inplace=True)
+        path = r'PycharmProjects/AST/data/historicalData/{ticker}.csv'
+        df.to_csv(path)
         st_73 = st_value(df, length=7, multiplier=3)
-        path = r'PycharmProjects/AST/data/historicalData/st_value_{ticker}.csv'
-        supertrend73.to_csv(path)
+        path = r'PycharmProjects/AST/data/historicalData/st_73_{ticker}.csv'
+        st_73.to_csv(path)
         st_72 = st_value(df, length=7, multiplier=2)
+        path = r'PycharmProjects/AST/data/historicalData/st_72_{ticker}.csv'
+        st72.to_csv(path)
         print(f"Received the signal for {ticker}")
         #gen_signal = generate_signal(ticker, supertrend_value)
         #indicator_signals.update{
