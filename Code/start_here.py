@@ -21,7 +21,7 @@ today_date, hist_date = set_dates(60)
 ticker_list = ['TCS','INFY','RELIANCE'] #Hardcoded for testing purpose
 failed_to_get_data = []
 successful_to_get_data = []
-cust_var = {}
+indicator_signals = {}
 
 for ticker in ticker_list:
     try:
@@ -35,11 +35,17 @@ for ticker in ticker_list:
         df['date'] = pd.to_datetime(df['date'], format='mixed')
         df['date'] = df['date'].dt.date
         df.drop_duplicates(inplace=True)
-        supertrend_value = st_value(df, length=7, multiplier=3)
+        st_73 = st_value(df, length=7, multiplier=3)
         path = r'PycharmProjects/AST/data/historicalData/st_value_{ticker}.csv'
-        supertrend_value.to_csv(path)
+        supertrend73.to_csv(path)
+        st_72 = st_value(df, length=7, multiplier=2)
         print(f"Received the signal for {ticker}")
         #gen_signal = generate_signal(ticker, supertrend_value)
+        #indicator_signals.update{st73_signal:
+        # st73_value:
+        # st72_signal:
+        # st72_value:
+        # }
 
     except Exception as e:
         failed_to_get_data.append(ticker)
