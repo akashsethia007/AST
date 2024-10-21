@@ -16,9 +16,10 @@ from utils.set_date import set_dates
 from utils.gen_signal import generate_signal
 
 cwd = os.getcwd()
-today_date, hist_date = set_dates()
+today_date, hist_date = set_dates(60)
 #phase 1 - > import the list of top 500 companies listed on NSE by market cap
-ticker_list = update500tickers()
+#ticker_list = update500tickers()
+ticker_list = ['TCS','INFY','RELIANCE'] #Hardcoded for testing purpose
 failed_to_get_data = []
 successful_to_get_data = []
 
@@ -35,6 +36,9 @@ for ticker in ticker_list:
         df['date'] = df['date'].dt.date
         df.drop_duplicates(inplace=True)
         supertrend_value = st_value(df, length=7, multiplier=3)
+        path = r'PycharmProjects/AST/data/historicalData/st_value_{ticker}.csv'
+        supertrend_value.to_csv(path)
+        print(f"Received the signal for {ticker}")
         #gen_signal = generate_signal(ticker, supertrend_value)
 
     except Exception as e:
