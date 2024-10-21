@@ -41,7 +41,8 @@ for ticker in ticker_list:
         st_72 = st_value(df, length=7, multiplier=2)
         print(f"Received the signal for {ticker}")
         #gen_signal = generate_signal(ticker, supertrend_value)
-        #indicator_signals.update{st73_signal:
+        #indicator_signals.update{
+        # st73_signal:
         # st73_value:
         # st72_signal:
         # st72_value:
