@@ -1,5 +1,4 @@
 def generate_st_signal(df, ticker):
-    print(f'generating signal for {ticker}')
     signal = 0
     df = df.tail(2)
     prev_day_values = list(df.iloc[0])

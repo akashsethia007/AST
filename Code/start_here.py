@@ -23,13 +23,13 @@ ticker_list = update500tickers()
 failed_to_get_data = []
 successful_to_get_data = []
 indicator_signals = []
-
+st_73_signals = []
+st_72_signals = []
 for ticker in ticker_list:
     try:
         df = getHistDatanow(ticker,today_date, hist_date)
         df.drop_duplicates(inplace=True)
         path = '\\'.join(cwd.split('\\')[:-1])+f'\data\historicalData\{ticker}.csv'
-        print(path)
         df.to_csv(path)
         successful_to_get_data.append(ticker)
         cols = ['date', 'open', 'high', 'low', 'close', 'volume']
@@ -40,11 +40,20 @@ for ticker in ticker_list:
         path = '\\'.join(cwd.split('\\')[:-1])+f'\data\st_73_data\{ticker}.csv'
         st_73.to_csv(path)
         st73_signal, st73_value = generate_st_signal(st_73,ticker)
+        st73_var = { "ticker": ticker,
+                     "st73_signal": st73_signal,
+                     "st73_value": st73_value
+        }
+        st_73_signals.append(st73_var)
         st_72 = st_value(df, length=7, multiplier=2)
         path = '\\'.join(cwd.split('\\')[:-1])+f'\data\st_72_data\{ticker}.csv'
         st_72.to_csv(path)
         st72_signal, st72_value = generate_st_signal(st_72,ticker)
-        print(f"Received the signal for {ticker}")
+        st72_var = {"ticker": ticker,
+                    "st72_signal": st72_signal,
+                    "st72_value": st72_value
+                    }
+        st_72_signals.append(st72_var)
         var = {
             "ticker": ticker,
             "st73_signal": st73_signal,
@@ -59,6 +68,13 @@ for ticker in ticker_list:
         failed_to_get_data.append(ticker)
 print(var)
 print(indicator_signals)
+path = '\\'.join(cwd.split('\\')[:-1])+f"\data\indicatorSignals\all.csv"
+indicator_signals.to_csv(path)
+path = '\\'.join(cwd.split('\\')[:-1])+f"\data\indicatorSignals\st73_signals.csv"
+st_73_signals.to_csv(path)
+path = '\\'.join(cwd.split('\\')[:-1])+f"\data\indicatorSignals\st72_signals.csv"
+st_72_signals.to_csv(path)
+
 '''
 print(df.head())
 print(df.columns)
