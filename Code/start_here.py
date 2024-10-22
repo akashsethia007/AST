@@ -68,14 +68,13 @@ for ticker in ticker_list:
         failed_to_get_data.append(ticker)
 print(var)
 print(indicator_signals)
+'''
 path = '\\'.join(cwd.split('\\')[:-1])+f"\data\indicatorSignals\all.csv"
 indicator_signals.to_csv(path)
 path = '\\'.join(cwd.split('\\')[:-1])+f"\data\indicatorSignals\st73_signals.csv"
 st_73_signals.to_csv(path)
 path = '\\'.join(cwd.split('\\')[:-1])+f"\data\indicatorSignals\st72_signals.csv"
 st_72_signals.to_csv(path)
-
-'''
 print(df.head())
 print(df.columns)
 df.info()
