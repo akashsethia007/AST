@@ -1,15 +1,6 @@
-import numpy as np
 import pandas as pd
 from datetime import datetime, date
-from nsepy import get_history
 import os
-from nsepy.commons import URLFetch
-from requests import Session
-from functools import partial
-from nsepy.constants import symbol_count, symbol_list
-import io
-from dateutil.relativedelta import relativedelta
-from nsepy.urls import equity_symbol_list_url, index_constituents_url
 from utils.getHistData import getHistDatanow
 from utils.get500tickers import update500tickers
 from utils.set_date import set_dates
@@ -17,6 +8,7 @@ from utils.gen_st_signal import generate_st_signal
 from utils.st_calculator import st_value
 from utils.genBuyOrders import gen_buy_orders
 
+print(f"Started the execution at {datetime.now()}")
 cwd = os.getcwd()
 today_date, hist_date = set_dates(60)
 ticker_list = update500tickers()
@@ -96,6 +88,7 @@ df.info()
 '''
 print(successful_to_get_data)
 print(failed_to_get_data)
+print(f"Completed the execution at {datetime.now()}")
 '''
 #generate GTT
 #phase3 - > Integrate with Kite
