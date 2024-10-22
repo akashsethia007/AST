@@ -20,7 +20,6 @@ def update500tickers():
     stock_list = mcap_df.head(500)
     stock_list = list(stock_list['Symbol'])
     final_list = [i.split('.', 1)[0] for i in stock_list]
-    '''
     cwd = os.getcwd()
     path = '\\'.join(cwd.split('\\')[:-1]) + "\\data\\nifty500list\\stockList.csv"
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -29,5 +28,4 @@ def update500tickers():
         file.write(item + "\n")
     file.close()
     print("Successfully updated the file")
-    '''
     return final_list
