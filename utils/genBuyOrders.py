@@ -1,5 +1,4 @@
-from typing import Any
-
+from datetime import datetime
 import pandas as pd
 import os
 
@@ -38,7 +37,9 @@ def gen_buy_orders(st_stocks):
                 print("Order placed here")
                 order_list.append(order)
                 cnt = cnt+1
-        path = '\\'.join(cwd.split('\\')[:-1])+f"\\transactions\\{row['custid']}.csv"
+        dt = datetime.today().strftime('%Y%m%d')
+        path = '\\'.join(cwd.split('\\')[:-1])+f"\\transactions\\{dt}\\{row['custid']}.csv"
+        os.makedirs(os.path.dirname(path), exist_ok=True)
         print(path)
         print(order_list)
         with open(path, 'w') as f:

@@ -12,7 +12,7 @@ def update500tickers():
         ticker = yf.Ticker(symbol)
         info = ticker.info
         market_cap = info.get('marketCap')
-        Market_Cap.append({"Symbol" : symbol, "Market_Cap":market_cap})
+        Market_Cap.append({"Symbol": symbol, "Market_Cap": market_cap})
 
     print("Updated the list with MCAP, now taking only the TOP 500 companies")
     mcap_df = pd.DataFrame(Market_Cap)
@@ -20,11 +20,14 @@ def update500tickers():
     stock_list = mcap_df.head(500)
     stock_list = list(stock_list['Symbol'])
     final_list = [i.split('.', 1)[0] for i in stock_list]
+    '''
     cwd = os.getcwd()
     path = '\\'.join(cwd.split('\\')[:-1]) + "\\data\\nifty500list\\stockList.csv"
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     file = open(path, 'w')
     for item in final_list:
         file.write(item + "\n")
     file.close()
     print("Successfully updated the file")
+    '''
     return final_list
