@@ -1,3 +1,4 @@
+import pandas as pd
 def generate_st_signal(df, ticker):
     signal = 0
     df = df.tail(2)
