@@ -12,7 +12,7 @@ print(f"Started the execution at {datetime.now()}")
 cwd = os.getcwd()
 today_date, hist_date = set_dates(60)
 ticker_list = update500tickers()
-#ticker_list = ['POLYMED'] #Hardcoded for testing purpose
+#ticker_list = ['HDFCBANK'] #Hardcoded for testing purpose
 failed_to_get_data = []
 successful_to_get_data = []
 indicator_signals = []
@@ -21,10 +21,14 @@ st_72_signals = []
 for ticker in ticker_list:
     try:
         df = getHistDatanow(ticker,today_date, hist_date)
+        path = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\nifty500list\\original.csv"
+        os.makedirs(os.path.dirname(path), exist_ok=True)
         successful_to_get_data.append(ticker)
+        '''
         df.drop_duplicates(inplace=True)
         df['date'] = pd.to_datetime(df['date'], format='mixed')
         df['date'] = df['date'].dt.date
+        '''
         close_price = list(df.tail(1).iloc[0])[6]
         st_73 = st_value(df, length=7, multiplier=3)
         st73_signal, st73_value = generate_st_signal(st_73,ticker)
@@ -58,7 +62,7 @@ for i in indicator_signals:
             "close_price": i['close_price']
         }
         st_72_stocks.append(var)
-        #st_72_stocks.append({f"{i['ticker']: i['close_price']}"})
+
 print(f"ST73 stocks being :: {st_73_stocks}")
 print(f"ST72 stocks being :: {st_72_stocks}")
 #send the list of stocks in st73 and st72 each over mail

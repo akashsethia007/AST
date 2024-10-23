@@ -1,2 +1,1 @@
 curl https://api.kite.trade/orders/regular \-H "X-Kite-Version: 3" \-H "Authorization: token api_key:kite" \-d "tradingsymbol=POLYMED" \-d "exchange=NSE" \-d "transaction_type=BUY" \-d "order_type=MARKET" \-d "quantity=3 " \-d "product=CNC" \-d "validity=DAY" 
-curl https://api.kite.trade/orders/regular \-H "X-Kite-Version: 3" \-H "Authorization: token api_key:kite" \-d "tradingsymbol=CUB" \-d "exchange=NSE" \-d "transaction_type=BUY" \-d "order_type=MARKET" \-d "quantity=59 " \-d "product=CNC" \-d "validity=DAY" 
