@@ -10,7 +10,7 @@ from utils.genBuyOrders import gen_buy_orders
 from utils.sendWAmsg import sendWAmsg
 print(f"Started the execution at {datetime.now()}")
 cwd = os.getcwd()
-today_date, hist_date = set_dates(60)
+today_date, hist_date = set_dates(45)
 ticker_list = update500tickers()
 #ticker_list = ['HDFCBANK'] #Hardcoded for testing purpose
 failed_to_get_data = []
