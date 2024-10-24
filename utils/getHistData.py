@@ -26,11 +26,14 @@ def format_dataframe_result(result):
     return result
 def getHistDatanow(ticker, today_date, hist_date):
     # df = stocks.get_data(stock_symbol=ticker, start_date=hist_date, end_date=today_date)
-    df = equity_history(ticker, str(hist_date), str(today_date))
-    df.drop_duplicates(inplace=True)
-    df = format_dataframe_result(df)
-    df['date'] = pd.to_datetime(df['date'], format='mixed')
-    df['date'] = df['date'].dt.date
+    try:
+        df = equity_history(ticker, str(hist_date), str(today_date))
+        df.drop_duplicates(inplace=True)
+        df = format_dataframe_result(df)
+        df['date'] = pd.to_datetime(df['date'], format='mixed')
+        df['date'] = df['date'].dt.date
+    except Exception as e:
+        print(f"ERROR: Failed to get the history data for {ticker}")
     result = df
 
     return result
@@ -41,9 +44,7 @@ df = getHistDatanow('INFY','22-10-2024','02-09-2024')
 path = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\nifty500list\\updated.csv"
 os.makedirs(os.path.dirname(path), exist_ok=True)
 df.to_csv(path)
-'''
 
-'''
 logging.basicConfig(level=logging.DEBUG)
 today_date set to 2024-10-23 and 
 hist_date set to 2024-08-24

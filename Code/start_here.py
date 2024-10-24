@@ -7,7 +7,7 @@ from utils.set_date import set_dates
 from utils.gen_st_signal import generate_st_signal
 from utils.st_calculator import st_value
 from utils.genBuyOrders import gen_buy_orders
-
+from utils.sendWAmsg import sendWAmsg
 print(f"Started the execution at {datetime.now()}")
 cwd = os.getcwd()
 today_date, hist_date = set_dates(60)
@@ -70,10 +70,11 @@ print(f"ST72 stocks being :: {st_72_stocks}")
 
 if len(st_73_stocks) > 0:
     gen_buy_orders(st_73_stocks)
+    sendWAmsg(st_73_stocks)
 else:
     print("No stocks in ST73 list")
 if len(st_72_stocks) > 0:
-    print("generating orders for st72")
+    sendWAmsg(st_72_stocks)
     gen_buy_orders(st_72_stocks)
 else:
     print("No stocks in ST72 list")
