@@ -70,14 +70,12 @@ print(f"ST72 stocks being :: {st_72_stocks}")
 
 if len(st_73_stocks) > 0:
     gen_buy_orders(st_73_stocks)
-    lst = [i['ticker'] for i in st_73_stocks]
-    sendWAmsg(["ST73 -> "] + lst)
+    sendWAmsg("ST73 -> " + ' '.join(st_73_stocks))
 else:
     print("No stocks in ST73 list")
 if len(st_72_stocks) > 0:
     gen_buy_orders(st_72_stocks)
-    lst = [i['ticker'] for i in st_72_stocks]
-    sendWAmsg(["ST72 -> "] + lst)
+    sendWAmsg("ST72 -> " + ' '.join(st_72_stocks))
 else:
     print("No stocks in ST72 list")
 #for each customer generate buy signal
