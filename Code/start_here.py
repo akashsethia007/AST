@@ -45,7 +45,7 @@ for ticker in ticker_list:
         indicator_signals.append(var)
 
     except Exception as e:
-        print(e)
+        print(f"Failed to do anything for {ticker} as the problem is {e}")
         failed_to_get_data.append(ticker)
 st_73_stocks = []
 st_72_stocks = []

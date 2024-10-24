@@ -33,7 +33,7 @@ def getHistDatanow(ticker, today_date, hist_date):
         df['date'] = pd.to_datetime(df['date'], format='mixed')
         df['date'] = df['date'].dt.date
     except Exception as e:
-        print(f"ERROR: Failed to get the history data for {ticker}")
+        print(f"ERROR: Failed to get the history data for {ticker} as {str(e)}")
     result = df
 
     return result

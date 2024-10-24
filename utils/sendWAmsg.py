@@ -1,6 +1,6 @@
 import pywhatkit
 #pywhatkit.start_server()
-def sendWAmsg(dataframe,phlist):
+def sendWAmsg(dataframe):
     try:
         phlist = ["+919545166688", "+919123390240", "+918197324666"]
         for num in phlist:
