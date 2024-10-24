@@ -8,6 +8,3 @@ def sendWAmsg(dataframe):
         print("WA Msg successfully sent")
     except Exception as e:
         print(f"ERROR :: Failed to send WA msg as {str(e)}")
-
-dataframe = ["Bhai, testing chal raha hai, code mein whatsapp integratrion ka","Yeh Automated msg hai","Code pull karo and dekho"]
-
