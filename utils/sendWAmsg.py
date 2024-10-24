@@ -1,11 +1,13 @@
 import pywhatkit
-pywhatkit.start_server()
-def sendWAmsg(dataframe):
+#pywhatkit.start_server()
+def sendWAmsg(dataframe,phlist):
     try:
-        pywhatkit.sendwhatmsg("+919545166688", f"Hello Python + {dataframe}",22,13)
+        phlist = ["+919545166688", "+919123390240", "+918197324666"]
+        for num in phlist:
+            pywhatkit.sendwhatmsg_instantly(f"{num}", dataframe,10,True,3)
         print("WA Msg successfully sent")
     except Exception as e:
         print(f"ERROR :: Failed to send WA msg as {str(e)}")
 
-dataframe = ["Test ", "the ","stock ",'List']
-sendWAmsg(dataframe)
+dataframe = ["Bhai, testing chal raha hai, code mein whatsapp integratrion ka","Yeh Automated msg hai","Code pull karo and dekho"]
+

@@ -1,0 +1,90 @@
+Date: 24/10/2024
+Time: 22:53
+Phone Number: +919545166688
+Message: Hello Python + ['Test ', 'the ', 'stock ', 'List']
+--------------------
+Date: 24/10/2024
+Time: 22:56
+Phone Number: +919545166688
+Message: Hello Python + ['Test ', 'the ', 'stock ', 'List']
+--------------------
+Date: 24/10/2024
+Time: 22:59
+Phone Number: +919545166688
+Message: Hello Python + ['Test ', 'the ', 'stock ', 'List']
+--------------------
+Date: 24/10/2024
+Time: 23:5
+Phone Number: +919545166688
+Message: Hello Python + ['Test ', 'the ', 'stock ', 'List']
+--------------------
+Date: 24/10/2024
+Time: 23:5
+Phone Number: +919123390240
+Message: Hello Python + ['Test ', 'the ', 'stock ', 'List']
+--------------------
+Date: 24/10/2024
+Time: 23:5
+Phone Number: +918197324666
+Message: Hello Python + ['Test ', 'the ', 'stock ', 'List']
+--------------------
+Date: 24/10/2024
+Time: 23:7
+Phone Number: +919545166688
+Message: Hello Python + ['Bhai, testing chal raha hai, code mein whatsapp integratrion ka', 'Yeh Automated msg hai']
+--------------------
+Date: 24/10/2024
+Time: 23:7
+Phone Number: +919123390240
+Message: Hello Python + ['Bhai, testing chal raha hai, code mein whatsapp integratrion ka', 'Yeh Automated msg hai']
+--------------------
+Date: 24/10/2024
+Time: 23:7
+Phone Number: +918197324666
+Message: Hello Python + ['Bhai, testing chal raha hai, code mein whatsapp integratrion ka', 'Yeh Automated msg hai']
+--------------------
+Date: 24/10/2024
+Time: 23:8
+Phone Number: +919545166688
+Message: Hello Python + ['Bhai, testing chal raha hai, code mein whatsapp integratrion ka', 'Yeh Automated msg hai', 'Code pull karo and dekho']
+--------------------
+Date: 24/10/2024
+Time: 23:8
+Phone Number: +919123390240
+Message: Hello Python + ['Bhai, testing chal raha hai, code mein whatsapp integratrion ka', 'Yeh Automated msg hai', 'Code pull karo and dekho']
+--------------------
+Date: 24/10/2024
+Time: 23:8
+Phone Number: +918197324666
+Message: Hello Python + ['Bhai, testing chal raha hai, code mein whatsapp integratrion ka', 'Yeh Automated msg hai', 'Code pull karo and dekho']
+--------------------
+Date: 24/10/2024
+Time: 23:11
+Phone Number: +919545166688
+Message: Hello Python + ['Bhai, testing chal raha hai, code mein whatsapp integratrion ka', 'Yeh Automated msg hai', 'Code pull karo and dekho']
+--------------------
+Date: 24/10/2024
+Time: 23:11
+Phone Number: +919123390240
+Message: Hello Python + ['Bhai, testing chal raha hai, code mein whatsapp integratrion ka', 'Yeh Automated msg hai', 'Code pull karo and dekho']
+--------------------
+Date: 24/10/2024
+Time: 23:11
+Phone Number: +918197324666
+Message: Hello Python + ['Bhai, testing chal raha hai, code mein whatsapp integratrion ka', 'Yeh Automated msg hai', 'Code pull karo and dekho']
+--------------------
+Date: 24/10/2024
+Time: 23:13
+Phone Number: +919545166688
+Message: Hello Python + ['Bhai, testing chal raha hai, code mein whatsapp integratrion ka', 'Yeh Automated msg hai', 'Code pull karo and dekho']
+--------------------
+Date: 24/10/2024
+Time: 23:13
+Phone Number: +919123390240
+Message: Hello Python + ['Bhai, testing chal raha hai, code mein whatsapp integratrion ka', 'Yeh Automated msg hai', 'Code pull karo and dekho']
+--------------------
+Date: 24/10/2024
+Time: 23:13
+Phone Number: +918197324666
+Message: Hello Python + ['Bhai, testing chal raha hai, code mein whatsapp integratrion ka', 'Yeh Automated msg hai', 'Code pull karo and dekho']
+--------------------

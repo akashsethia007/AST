@@ -17,7 +17,7 @@ def update500tickers():
     print("Updated the list with MCAP, now taking only the TOP 500 companies")
     mcap_df = pd.DataFrame(Market_Cap)
     mcap_df.sort_values('Market_Cap', ascending=False, inplace=True)
-    stock_list = mcap_df.head(500)
+    stock_list = mcap_df.head(250)
     stock_list = list(stock_list['Symbol'])
     final_list = [i.split('.', 1)[0] for i in stock_list]
     cwd = os.getcwd()
