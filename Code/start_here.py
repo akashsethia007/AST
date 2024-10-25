@@ -7,11 +7,11 @@ from utils.set_date import set_dates
 from utils.gen_st_signal import generate_st_signal
 from utils.st_calculator import st_value
 from utils.genBuyOrders import gen_buy_orders
-from utils.sendWAmsg import sendWAmsg
-print(f"Started the execution at {datetime.now()}")
+print(f"INFO :: Started the execution at {datetime.now()}")
 cwd = os.getcwd()
 today_date, hist_date = set_dates(45)
 ticker_list = update500tickers()
+print(f"INFO :: Created the list of top MCAP companies at {datetime.now()}")
 #ticker_list = ['HDFCBANK'] #Hardcoded for testing purpose
 failed_to_get_data = []
 successful_to_get_data = []
@@ -21,14 +21,7 @@ st_72_signals = []
 for ticker in ticker_list:
     try:
         df = getHistDatanow(ticker,today_date, hist_date)
-        path = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\nifty500list\\original.csv"
-        os.makedirs(os.path.dirname(path), exist_ok=True)
         successful_to_get_data.append(ticker)
-        '''
-        df.drop_duplicates(inplace=True)
-        df['date'] = pd.to_datetime(df['date'], format='mixed')
-        df['date'] = df['date'].dt.date
-        '''
         close_price = list(df.tail(1).iloc[0])[6]
         st_73 = st_value(df, length=7, multiplier=3)
         st73_signal, st73_value = generate_st_signal(st_73,ticker)
@@ -47,6 +40,7 @@ for ticker in ticker_list:
     except Exception as e:
         print(f"Failed to do anything for {ticker} as the problem is {e}")
         failed_to_get_data.append(ticker)
+print(f"INFO :: Done with the execution at {datetime.now()}")
 st_73_stocks = []
 st_72_stocks = []
 for i in indicator_signals:
@@ -63,35 +57,21 @@ for i in indicator_signals:
         }
         st_72_stocks.append(var)
 
-print(f"ST73 stocks being :: {st_73_stocks}")
-print(f"ST72 stocks being :: {st_72_stocks}")
-#send the list of stocks in st73 and st72 each over mail
-#send the list of stocks in st73 and st72 each over WA
+print(f"INFO:: ST73 stocks being :: {st_73_stocks}")
+print(f"INFO:: ST72 stocks being :: {st_72_stocks}")
 
 if len(st_73_stocks) > 0:
     gen_buy_orders(st_73_stocks)
 else:
-    print("No stocks in ST73 list")
+    print("INFO:: No stocks in ST73 list")
 if len(st_72_stocks) > 0:
     gen_buy_orders(st_72_stocks)
 else:
-    print("No stocks in ST72 list")
-#for each customer generate buy signal
-#for each customer generate GTT for each buy signal
-'''
-path = '\\'.join(cwd.split('\\')[:-1])+f"\data\indicatorSignals\all.csv"
-indicator_signals.to_csv(path)
-path = '\\'.join(cwd.split('\\')[:-1])+f"\data\indicatorSignals\st73_signals.csv"
-st_73_signals.to_csv(path)
-path = '\\'.join(cwd.split('\\')[:-1])+f"\data\indicatorSignals\st72_signals.csv"
-st_72_signals.to_csv(path)
-print(df.head())
-print(df.columns)
-df.info()
-'''
+    print("INFO:: No stocks in ST72 list")
 print(successful_to_get_data)
 print(failed_to_get_data)
 print(f"Completed the execution at {datetime.now()}")
+
 '''
 #generate GTT
 #phase3 - > Integrate with Kite

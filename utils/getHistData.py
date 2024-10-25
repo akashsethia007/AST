@@ -18,16 +18,15 @@ def format_dataframe_result(result):
                         "CH_52WEEK_LOW_PRICE", "TIMESTAMP"]
     result = result[columns_required]
     result = result.set_axis(
-        ['datetime', 'Symbol', 'Series', 'high', 'low', 'open', 'close', 'Last Price',
-         'Prev Close Price', 'volume', 'Total Traded Value', '52 Week High Price',
-         '52 Week Low Price','date'], axis=1)
+        ['datetime', 'Symbol', 'Series', 'high', 'low', 'open', 'close', 'Last_Price',
+         'Prev_Close_Price', 'volume', 'Total_Traded_Value', '52_Week_High',
+         '52_Week_Low','date'], axis=1)
     result.set_index('datetime', inplace=True)
     result.sort_index(inplace=True)
     return result
 def getHistDatanow(ticker, today_date, hist_date):
-    # df = stocks.get_data(stock_symbol=ticker, start_date=hist_date, end_date=today_date)
     try:
-        df = equity_history(ticker, str(hist_date), str(today_date))
+        df = stocks.get_data(stock_symbol=ticker, start_date=hist_date, end_date=today_date)
         df.drop_duplicates(inplace=True)
         df = format_dataframe_result(df)
         df['date'] = pd.to_datetime(df['date'], format='mixed')
