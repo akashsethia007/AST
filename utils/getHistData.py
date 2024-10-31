@@ -28,7 +28,7 @@ def getHistDatanow(ticker, today_date, hist_date):
     try:
         df = stocks.get_data(stock_symbol=ticker, start_date=hist_date, end_date=today_date)
         df.drop_duplicates(inplace=True)
-        df = format_dataframe_result(df)
+        #df = format_dataframe_result(df)
         df['date'] = pd.to_datetime(df['date'], format='mixed')
         df['date'] = df['date'].dt.date
     except Exception as e:
