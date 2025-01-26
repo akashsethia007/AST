@@ -18,9 +18,9 @@ def update500tickers():
         market_cap = info.get('marketCap')
         Market_Cap.append({"Symbol": symbol, "Market_Cap": market_cap})
         counter = counter+1
-        if counter/100 ==0:
+        print(counter)
+        if counter/100 == 0:
             print("Here goes 100 stocks")
-        time.sleep(0.01)
 
     print("Updated the list with MCAP, now taking only the TOP 500 companies")
     mcap_df = pd.DataFrame(Market_Cap)
