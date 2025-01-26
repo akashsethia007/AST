@@ -11,11 +11,15 @@ def update500tickers():
     eq = capital_market.equity_list()
     eq_symbol = list(eq['SYMBOL'] + '.NS')
     Market_Cap = []
+    counter = 0
     for symbol in eq_symbol:
         ticker = yf.Ticker(symbol)
         info = ticker.info
         market_cap = info.get('marketCap')
         Market_Cap.append({"Symbol": symbol, "Market_Cap": market_cap})
+        counter = counter+1
+        if counter/100 ==0:
+            print("Here goes 100 stocks")
         time.sleep(0.01)
 
     print("Updated the list with MCAP, now taking only the TOP 500 companies")
