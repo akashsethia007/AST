@@ -9,9 +9,9 @@ from utils.genBuyOrders import gen_buy_orders
 print(f"INFO :: Started the execution at {datetime.now()}")
 cwd = os.getcwd()
 today_date, hist_date = set_dates(45)
-ticker_list = update500tickers()
+#ticker_list = update500tickers()
 print(f"INFO :: Created the list of top MCAP companies at {datetime.now()}")
-#ticker_list = ['HDFCBANK'] #Hardcoded for testing purpose
+ticker_list = ['HDFCBANK','INFY'] #Hardcoded for testing purpose
 failed_to_get_data = []
 successful_to_get_data = []
 indicator_signals = []
