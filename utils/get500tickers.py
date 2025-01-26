@@ -4,7 +4,6 @@ from nselib import capital_market
 import yfinance as yf
 import pandas as pd
 import os
-import time
 
 def update500tickers():
     print("Started updating the list of TOP 500 MCAP companies on NSE")
