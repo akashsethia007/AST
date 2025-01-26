@@ -1,7 +1,10 @@
+from time import sleep
+
 from nselib import capital_market
 import yfinance as yf
 import pandas as pd
 import os
+import time
 
 def update500tickers():
     print("Started updating the list of TOP 500 MCAP companies on NSE")
@@ -13,6 +16,7 @@ def update500tickers():
         info = ticker.info
         market_cap = info.get('marketCap')
         Market_Cap.append({"Symbol": symbol, "Market_Cap": market_cap})
+        time.sleep(0.01)
 
     print("Updated the list with MCAP, now taking only the TOP 500 companies")
     mcap_df = pd.DataFrame(Market_Cap)
