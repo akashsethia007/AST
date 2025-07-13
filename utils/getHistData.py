@@ -1,15 +1,20 @@
-import os
-from utils import scraper, stocks
+import pandas as pd
+import time
 from nsepython import *
+import yfinance as yf
+from utils import stocks
 
-def equity_history(ticker,start_date,end_date):
-    url="https://www.nseindia.com/api/historical/cm/equity?symbol="+ticker+"&series=[%22"+"EQ"+"%22]&from="+str(start_date)+"&to="+str(end_date)+""
+
+def equity_history(ticker, start_date, end_date):
+    url = "https://www.nseindia.com/api/historical/cm/equity?symbol=" + ticker + "&series=[%22" + "EQ" + "%22]&from=" + str(
+        start_date) + "&to=" + str(end_date) + ""
     try:
         payload = nsefetch(url)
         df = pd.DataFrame.from_records(payload["data"])
     except Exception as e:
         print(f"ERROR for {ticker} being :: {str(e)}")
     return pd.DataFrame.from_records(payload["data"])
+
 
 def format_dataframe_result(result):
     columns_required = ["TIMESTAMP", "CH_SYMBOL", "CH_SERIES", "CH_TRADE_HIGH_PRICE",
@@ -20,22 +25,33 @@ def format_dataframe_result(result):
     result = result.set_axis(
         ['datetime', 'Symbol', 'Series', 'high', 'low', 'open', 'close', 'Last_Price',
          'Prev_Close_Price', 'volume', 'Total_Traded_Value', '52_Week_High',
-         '52_Week_Low','date'], axis=1)
+         '52_Week_Low', 'date'], axis=1)
     result.set_index('datetime', inplace=True)
     result.sort_index(inplace=True)
     return result
-def getHistDatanow(ticker, today_date, hist_date):
+
+
+def getHistDatanow(ticker,hist_date):
+    data = pd.DataFrame
     try:
+        '''
         df = stocks.get_data(stock_symbol=ticker, start_date=hist_date, end_date=today_date)
         df.drop_duplicates(inplace=True)
-        #df = format_dataframe_result(df)
+        # df = format_dataframe_result(df)
         df['date'] = pd.to_datetime(df['date'], format='mixed')
         df['date'] = df['date'].dt.date
+        '''
+        ticker = ticker+".NS"
+        ticker = yf.Ticker(ticker)
+        data = ticker.history(start=hist_date)
+        time.sleep(0.1)
+
     except Exception as e:
         print(f"ERROR: Failed to get the history data for {ticker} as {str(e)}")
-    result = df
+        data=False
 
-    return result
+    return data
+
 
 '''
 cwd=os.getcwd()

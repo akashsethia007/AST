@@ -8,6 +8,9 @@ import pandas as pd
 import urllib.parse
 import concurrent.futures
 import logging
+import chardet
+
+from requests.compat import chardet
 
 HISTORICAL_DATA_URL = 'https://www.nseindia.com/api/historical/cm/equity?series=[%22EQ%22]&'
 BASE_URL = 'https://www.nseindia.com/'
@@ -28,7 +31,7 @@ def get_headers():
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With",
-        'Content-Type': 'application/start_date-www-form-urlencoded; charset=UTF-8'
+        'Content-Type': 'application/start_date-www-form-urlencoded; charset=ISO-8859-1'
     }
 
 
@@ -47,6 +50,8 @@ def get_adjusted_headers():
 
 def fetch_cookies():
     response = requests.get(BASE_URL, timeout=30, headers=get_adjusted_headers())
+    encoding = chardet.detect(response.content)['encoding']
+    print(f"first one is {encoding}")
     if response.status_code != requests.codes.ok:
         logging.error("Fetched url: %s with status code: %s and response from server: %s" % (
             BASE_URL, response.status_code, response.content))
@@ -61,6 +66,9 @@ def fetch_url(url, cookies):
     """
 
     response = requests.get(url, timeout=30, headers=get_adjusted_headers(), cookies=cookies)
+    encoding = chardet.detect(response.content)['encoding']
+    print(encoding)
+
     if response.status_code == requests.codes.ok:
         json_response = json.loads(response.content)
         return pd.DataFrame.from_dict(json_response['data'])
