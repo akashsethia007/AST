@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 import subprocess
 import sys
-subprocess.run([sys.executable, "-m", "pip", "freeze"])
+#subprocess.run([sys.executable, "-m", "pip", "freeze"])
 from utils.genBuyOrders import gen_buy_orders
 from utils.gen_st_signal import generate_st_signal
 from utils.get500tickers import update500tickers
@@ -22,11 +22,6 @@ peewee_logger.disabled = True
 peewee_logger.setLevel(logging.WARNING)
 peewee_logger.handlers = []
 
-
-
-
-
-
 print(f"INFO :: Started the execution at {datetime.now()}")
 
 today_date, hist_date = set_dates(400)
@@ -37,7 +32,7 @@ indicator_signals = []
 st_73_signals = []
 st_72_signals = []
 counter = 0
-
+print(f"INFO :: Starting Indicator calculations at {datetime.now()}")
 for ticker in ticker_list:
     counter = counter + 1
     if counter % 50 == 0:
@@ -113,8 +108,8 @@ for i in indicator_signals:
         st_72_dma_stocks.append(var)
 
 print(f"INFO :: ST73 stocks being :: {st_73_stocks}")
-print(f"INFO :: ST72 stocks being :: {st_72_stocks}")
 print(f"INFO :: ST73 with 200 DMA stocks being :: {st_73_dma_stocks}")
+print(f"INFO :: ST72 stocks being :: {st_72_stocks}")
 print(f"INFO :: ST72 with 200 DMA stocks being :: {st_72_dma_stocks}")
 cwd = os.getcwd()
 dt = datetime.today().strftime('%Y%m%d')
