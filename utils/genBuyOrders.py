@@ -2,8 +2,6 @@ from datetime import datetime
 import pandas as pd
 import os
 
-from numpy import ndarray, dtype
-from pandas import Series, DataFrame
 global st_stocks
 cwd = os.getcwd()
 def gen_buy_orders(st_stocks):

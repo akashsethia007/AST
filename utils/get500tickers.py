@@ -1,4 +1,3 @@
-from time import sleep
 import time
 from nselib import capital_market
 import yfinance as yf
@@ -24,7 +23,7 @@ def update500tickers():
         except Exception as e:
             print(f"get500tickers couldnt get the data for {symbol}")
         counter = counter + 1
-        if counter%100 == 0:
+        if counter%200 == 0:
             print(f"INFO :: {round(counter*100/len(eq_symbol),2)} % done ")
 
     print("INFO :: Updated the list with MCAP, now taking only the TOP 500 companies")
