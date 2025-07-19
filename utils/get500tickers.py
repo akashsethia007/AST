@@ -26,6 +26,7 @@ def update500tickers():
         if counter%200 == 0:
             print(f"INFO :: {round(counter*100/len(eq_symbol),2)} % done ")
 
+    print(f"INFO :: 100 % done ")
     print("INFO :: Updated the list with MCAP, now taking only the TOP 500 companies")
     mcap_df = pd.DataFrame(Market_Cap)
     mcap_df.sort_values('Market_Cap', ascending=False, inplace=True)
@@ -39,5 +40,5 @@ def update500tickers():
     for item in final_list:
         file.write(item + "\n")
     file.close()
-    print("INFO:: Successfully updated the file")
+    print("INFO :: Successfully updated the file")
     return final_list
