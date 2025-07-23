@@ -21,7 +21,7 @@ def update500tickers():
             market_cap = info.get('marketCap')
             Market_Cap.append({"Symbol": symbol, "Market_Cap": market_cap})
         except Exception as e:
-            print(f"get500tickers couldnt get the data for {symbol}")
+            print(f"ERROR :: get500tickers couldnt get the data for {symbol}")
         counter = counter + 1
         if counter%200 == 0:
             print(f"INFO :: {round(counter*100/len(eq_symbol),2)} % done ")

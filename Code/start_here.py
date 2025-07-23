@@ -37,7 +37,7 @@ for ticker in ticker_list:
     counter = counter + 1
     if counter % 50 == 0:
         print(f"INFO :: {round(counter * 100 / len(ticker_list), 2)}% done.")
-    time.sleep(0.1)
+    time.sleep(0.01)
     try:
         df = getHistDatanow(ticker, hist_date)
         close_price = list(df.tail(1).iloc[0])[3]
@@ -47,7 +47,7 @@ for ticker in ticker_list:
             st_73 = st_value(df, length=7, multiplier=3)
             st73_signal, st73_value = generate_st_signal(st_73, ticker)
         except Exception as e:
-            print(f"ERROR:: Failed to get SuperTrend 73 value for {ticker}")
+            print(f"ERROR :: Failed to get SuperTrend 73 value for {ticker}")
             st73_signal, st73_value = -1, -1
         try:
             st_72 = st_value(df, length=7, multiplier=2)
@@ -143,4 +143,6 @@ print(f"INFO :: Completed the execution at {datetime.now()}")
 '''
 #generate GTT
 #phase3 - > Integrate with Kite
+phase4 -> update gtt
+
 '''
