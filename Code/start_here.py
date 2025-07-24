@@ -144,5 +144,4 @@ print(f"INFO :: Completed the execution at {datetime.now()}")
 #generate GTT
 #phase3 - > Integrate with Kite
 phase4 -> update gtt
-
 '''
