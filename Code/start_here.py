@@ -113,11 +113,13 @@ print(f"INFO :: ST72 stocks being :: {st_72_stocks}")
 print(f"INFO :: ST72 with 200 DMA stocks being :: {st_72_dma_stocks}")
 cwd = os.getcwd()
 dt = datetime.today().strftime('%Y%m%d')
+path_indicator_signals = '\\'.join(cwd.split('\\')[:-1]) + f"\\indicator_signals\\{dt}_indicator_signals.csv"
 path73 = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\st\\{dt}_st73.csv"
 path72 = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\st\\{dt}_st72.csv"
 path73dma = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\st\\{dt}_st73_dma.csv"
 path72dma = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\st\\{dt}_st72_dma.csv"
 
+writeSTFiles(path_indicator_signals, indicator_signals)
 if len(st_73_stocks) > 0:
     print("INFO :: Writing the ST73 file")
     writeSTFiles(path73, st_73_stocks)
