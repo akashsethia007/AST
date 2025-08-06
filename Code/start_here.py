@@ -35,7 +35,7 @@ counter = 0
 print(f"INFO :: Starting Indicator calculations at {datetime.now()}")
 for ticker in ticker_list:
     counter = counter + 1
-    if counter % 50 == 0:
+    if counter % 100 == 0:
         print(f"INFO :: {round(counter * 100 / len(ticker_list), 2)}% done.")
     time.sleep(0.01)
     try:
@@ -62,8 +62,8 @@ for ticker in ticker_list:
             "st73_value": st73_value,
             "st72_signal": st72_signal,
             "st72_value": st72_value,
-            "close_price": close_price,
-            "DMA_200": DMA_200
+            "close_price": round(close_price,2),
+            "DMA_200": round(DMA_200,2)
         }
         indicator_signals.append(var)
     except Exception as e:

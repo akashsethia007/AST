@@ -23,7 +23,7 @@ def update500tickers():
         except Exception as e:
             print(f"ERROR :: get500tickers couldnt get the data for {symbol}")
         counter = counter + 1
-        if counter%200 == 0:
+        if counter%250 == 0:
             print(f"INFO :: {round(counter*100/len(eq_symbol),2)} % done ")
 
     print(f"INFO :: 100 % done ")
@@ -37,6 +37,7 @@ def update500tickers():
     path = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\nifty500list\\{dt}_stockList.csv"
     os.makedirs(os.path.dirname(path), exist_ok=True)
     file = open(path, 'w')
+    file.write("Stock_Symbols" + "\n")
     for item in final_list:
         file.write(item + "\n")
     file.close()
