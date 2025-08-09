@@ -35,7 +35,7 @@ counter = 0
 print(f"INFO :: Starting Indicator calculations at {datetime.now()}")
 for ticker in ticker_list:
     counter = counter + 1
-    if counter % 100 == 0:
+    if counter % 125 == 0:
         print(f"INFO :: {round(counter * 100 / len(ticker_list), 2)}% done.")
     time.sleep(0.01)
     try:
