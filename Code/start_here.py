@@ -108,9 +108,9 @@ for i in indicator_signals:
         st_72_dma_stocks.append(var)
 
 print(f"INFO :: ST73 stocks being :: {st_73_stocks}")
-print(f"INFO :: ST73 with 200 DMA stocks being :: {st_73_dma_stocks}")
+print(f"INFO :: ST73 with 200 DMA :: {st_73_dma_stocks}")
 print(f"INFO :: ST72 stocks being :: {st_72_stocks}")
-print(f"INFO :: ST72 with 200 DMA stocks being :: {st_72_dma_stocks}")
+print(f"INFO :: ST72 with 200 DMA :: {st_72_dma_stocks}")
 cwd = os.getcwd()
 dt = datetime.today().strftime('%Y%m%d')
 path_indicator_signals = '\\'.join(cwd.split('\\')[:-1]) + f"\\indicator_signals\\{dt}_indicator_signals.csv"
