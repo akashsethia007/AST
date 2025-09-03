@@ -4,9 +4,6 @@ from datetime import datetime
 import subprocess
 import sys
 #subprocess.run([sys.executable, "-m", "pip", "freeze"])
-subprocess.run(["git", "add", "."])
-subprocess.run(["git", "commit", "-m", "'Updated the code'"])
-subprocess.run(["git", "push"])
 from utils.genBuyOrders import gen_buy_orders
 from utils.gen_st_signal import generate_st_signal
 from utils.get500tickers import update500tickers
@@ -143,6 +140,10 @@ if len(st_72_stocks) > 0:
 else:
     print("INFO :: No stocks in ST72 list")
 
+print("INFO :: Pushing the changes now")
+subprocess.run(["git", "add", "."])
+subprocess.run(["git", "commit", "-m", "'Updated the code'"])
+subprocess.run(["git", "push"])
 print(f"INFO :: Completed the execution at {datetime.now()}")
 
 '''
