@@ -5,7 +5,7 @@ import subprocess
 import sys
 #subprocess.run([sys.executable, "-m", "pip", "freeze"])
 subprocess.run(["git", "add", "."])
-subprocess.run(["git", "commit", "-m", "'Updated the code"])
+subprocess.run(["git", "commit", "-m", "'Updated the code'"])
 subprocess.run(["git", "push"])
 from utils.genBuyOrders import gen_buy_orders
 from utils.gen_st_signal import generate_st_signal
