@@ -12,7 +12,7 @@ from utils.set_date import set_dates
 from utils.st_calculator import st_value
 from utils.writeSTFiles import writeSTFiles
 import logging
-
+'''
 logger = logging.getLogger('yfinance')
 logger.disabled = True
 logger.propagate = False
@@ -139,7 +139,7 @@ if len(st_72_stocks) > 0:
     gen_buy_orders(st_72_stocks)
 else:
     print("INFO :: No stocks in ST72 list")
-
+'''
 print("INFO :: Pushing the changes now")
 subprocess.run(["git", "add", "."], check=True, capture_output=True, text=True)
 subprocess.run(["git", "commit", "-m", "'Updated the code'"], check=True, capture_output=True, text=True)
