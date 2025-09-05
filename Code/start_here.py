@@ -2,7 +2,6 @@ import os
 import time
 from datetime import datetime
 import subprocess
-import sys
 #subprocess.run([sys.executable, "-m", "pip", "freeze"])
 from utils.genBuyOrders import gen_buy_orders
 from utils.gen_st_signal import generate_st_signal
@@ -12,7 +11,7 @@ from utils.set_date import set_dates
 from utils.st_calculator import st_value
 from utils.writeSTFiles import writeSTFiles
 import logging
-'''
+
 logger = logging.getLogger('yfinance')
 logger.disabled = True
 logger.propagate = False
@@ -139,7 +138,7 @@ if len(st_72_stocks) > 0:
     gen_buy_orders(st_72_stocks)
 else:
     print("INFO :: No stocks in ST72 list")
-'''
+
 print("INFO :: Pushing the changes now")
 git_path = '\\'.join(os.getcwd().split('\\')[:-1])
 subprocess.run(["git", "add", "."], cwd=git_path,check=True, capture_output=True, text=True)
