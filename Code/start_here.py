@@ -141,13 +141,16 @@ else:
     print("INFO :: No stocks in ST72 list")
 '''
 print("INFO :: Pushing the changes now")
-subprocess.run(["git", "add", "."], check=True, capture_output=True, text=True)
-subprocess.run(["git", "commit", "-m", "'Updated the code'"], check=True, capture_output=True, text=True)
-subprocess.run(["git", "push"], check=True, capture_output=True, text=True)
-
+p='\\'.join(os.getcwd().split('\\')[:-1])
+# Run a Git command in that directory
+subprocess.run(["git", "status"], cwd=p, capture_output=True, text=True)
+subprocess.run(["git", "add", "."], cwd=p,check=True, capture_output=True, text=True)
+subprocess.run(["git", "commit", "-m", "'Updated the code'"], cwd=p,check=True, capture_output=True, text=True)
+subprocess.run(["git", "push"], cwd=p,check=True, capture_output=True, text=True)
+'''
 print(f"INFO :: Completed the execution at {datetime.now()}")
 
-'''
+
 #generate GTT
 #phase3 - > Integrate with Kite
 phase4 -> update gtt
