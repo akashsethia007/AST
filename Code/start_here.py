@@ -22,7 +22,7 @@ peewee_logger.setLevel(logging.WARNING)
 peewee_logger.handlers = []
 
 print(f"INFO :: Started the execution at {datetime.now()}")
-'''
+
 today_date, hist_date = set_dates(400)
 ticker_list = update500tickers()
 print(f"INFO :: Created the list of top MCAP companies at {datetime.now()}")
@@ -140,7 +140,7 @@ else:
     print("INFO :: No stocks in ST72 list")
 
 
-
+'''
 #generate GTT
 #phase3 - > Integrate with Kite
 phase4 -> update gtt
