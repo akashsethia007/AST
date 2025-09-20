@@ -22,7 +22,7 @@ peewee_logger.setLevel(logging.WARNING)
 peewee_logger.handlers = []
 
 print(f"INFO :: Started the execution at {datetime.now()}")
-
+'''
 today_date, hist_date = set_dates(400)
 ticker_list = update500tickers()
 print(f"INFO :: Created the list of top MCAP companies at {datetime.now()}")
@@ -139,16 +139,16 @@ if len(st_72_stocks) > 0:
 else:
     print("INFO :: No stocks in ST72 list")
 
-print("INFO :: Pushing the changes now")
-git_path = '\\'.join(os.getcwd().split('\\')[:-1])
-subprocess.run(["git", "add", "."], cwd=git_path,check=True, capture_output=True, text=True)
-subprocess.run(["git", "commit", "-m", "'Updated the code'"], cwd=git_path,check=True, capture_output=True, text=True)
-subprocess.run(["git", "push"], cwd=git_path,check=True, capture_output=True, text=True)
 
-print(f"INFO :: Completed the execution at {datetime.now()}")
 
-'''
 #generate GTT
 #phase3 - > Integrate with Kite
 phase4 -> update gtt
 '''
+print("INFO :: Pushing the changes now")
+git_path = '\\'.join(os.getcwd().split('\\')[:-1])
+subprocess.run(["git", "add", "."], cwd=git_path)
+subprocess.run(["git", "commit", "-m", "'Updated the code'"], cwd=git_path)
+subprocess.run(["git", "push"], cwd=git_path)
+
+print(f"INFO :: Completed the execution at {datetime.now()}")
