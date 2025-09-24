@@ -9,3 +9,5 @@ def writeSTFiles(path, st_list):
         values = [str(row.get(header, "")) for header in headers]
         file.write(",".join(values) + "\n")
     file.close()
+#Add other file types and merge the same here...
+#Make sure to cover all file writes here
