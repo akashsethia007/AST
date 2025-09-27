@@ -128,7 +128,7 @@ path72dma = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\st\\{dt}_st72_dma.csv"
 try:
     writeSTFiles(path_indicator_signals, indicator_signals)
 except Exception as e:
-    print(str(e))
+    print(f"ERROR :: No ST tickers for this execution as {str(e)}")
 if len(st_73_stocks) > 0:
     print("INFO :: Writing the ST73 file")
     writeSTFiles(path73, st_73_stocks)
