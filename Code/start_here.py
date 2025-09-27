@@ -3,6 +3,8 @@ import time
 from datetime import datetime
 import subprocess
 #subprocess.run([sys.executable, "-m", "pip", "freeze"])
+from datetime import datetime
+import logging
 from utils.genBuyOrders import gen_buy_orders
 from utils.gen_st_signal import generate_st_signal
 from utils.get500tickers import update500tickers
@@ -10,7 +12,8 @@ from utils.getHistData import getHistDatanow
 from utils.set_date import set_dates
 from utils.st_calculator import st_value
 from utils.writeSTFiles import writeSTFiles
-import logging
+
+today = datetime.today().strftime('%Y%m%d')
 
 logger = logging.getLogger('yfinance')
 logger.disabled = True
@@ -24,9 +27,9 @@ peewee_logger.handlers = []
 print(f"INFO :: Started the execution at {datetime.now()}")
 
 today_date, hist_date = set_dates(400)
-ticker_list = update500tickers()
+#ticker_list = update500tickers()
 print(f"INFO :: Created the list of top MCAP companies at {datetime.now()}")
-#ticker_list = ['HDFCBANK'] #Hardcoded for testing purpose
+ticker_list = ['HDFCBANK'] #Hardcoded for testing purpose
 indicator_signals = []
 st_73_signals = []
 st_72_signals = []
@@ -78,7 +81,8 @@ for i in indicator_signals:
             "ticker": i['ticker'],
             "close_price": i['close_price'],
             "st73_value" : i['st73_value'],
-            "DMA_200": i["DMA_200"]
+            "DMA_200": i["DMA_200"],
+            "datee": today
         }
         st_73_stocks.append(var)
     if i['st72_signal'] == 1:
@@ -86,7 +90,8 @@ for i in indicator_signals:
             "ticker": i['ticker'],
             "close_price": i['close_price'],
             "st72_value": i['st72_value'],
-            "DMA_200": i["DMA_200"]
+            "DMA_200": i["DMA_200"],
+            "datee": today
         }
         st_72_stocks.append(var)
     if i['st73_signal'] == 1 and i['close_price'] > i['DMA_200']:
@@ -94,7 +99,8 @@ for i in indicator_signals:
             "ticker": i['ticker'],
             "close_price": i['close_price'],
             "st73_value": i['st73_value'],
-            "DMA_200": i["DMA_200"]
+            "DMA_200": i["DMA_200"],
+            "datee": today
         }
         st_73_dma_stocks.append(var)
     if i['st72_signal'] == 1 and i['close_price'] > i['DMA_200']:
@@ -102,7 +108,8 @@ for i in indicator_signals:
             "ticker": i['ticker'],
             "close_price": i['close_price'],
             "st72_value": i['st72_value'],
-            "DMA_200": i["DMA_200"]
+            "DMA_200": i["DMA_200"],
+            "datee": today
         }
         st_72_dma_stocks.append(var)
 
@@ -118,7 +125,10 @@ path72 = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\st\\{dt}_st72.csv"
 path73dma = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\st\\{dt}_st73_dma.csv"
 path72dma = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\st\\{dt}_st72_dma.csv"
 
-writeSTFiles(path_indicator_signals, indicator_signals)
+try:
+    writeSTFiles(path_indicator_signals, indicator_signals)
+except Exception as e:
+    print(str(e))
 if len(st_73_stocks) > 0:
     print("INFO :: Writing the ST73 file")
     writeSTFiles(path73, st_73_stocks)

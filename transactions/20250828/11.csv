@@ -1,1 +1,0 @@
-curl https://api.kite.trade/orders/regular \-H "X-Kite-Version: 3" \-H "Authorization: token api_key:kite" \-d "tradingsymbol=ATGL" \-d "exchange=NSE" \-d "transaction_type=BUY" \-d "order_type=MARKET" \-d "quantity=1 " \-d "product=CNC" \-d "validity=DAY" 
