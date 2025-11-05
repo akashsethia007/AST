@@ -28,13 +28,14 @@ def main():
     print(f"INFO  :: Started the execution at {datetime.now()}")
     today_date, hist_date = set_dates(400)
 
-    ticker_list = update500tickers()
-    # ticker_list = ['HDFCBANK'] #Hardcoded for testing purpose
+    #ticker_list = update500tickers()
+    ticker_list = ['HDFCBANK'] #Hardcoded for testing purpose
     print(f"INFO  :: Created the list of top MCAP companies at {datetime.now()}")
     indicator_signals = []
     st_73_signals = []
     st_72_signals = []
     counter = 0
+    DMA_change = 0
     print(f"INFO  :: Starting Indicator calculations at {datetime.now()}")
     for ticker in ticker_list:
         counter = counter + 1
@@ -46,6 +47,12 @@ def main():
             close_price = list(df.tail(1).iloc[0])[3]
             df['200DMA'] = df['Close'].rolling(window=200).mean()
             DMA_200 = round(list(df.tail(1).iloc[0])[7], 2)
+            df['10DMA'] = df['Close'].rolling(window=10).mean()
+            DMA_10 = round(list(df.tail(1).iloc[0])[8], 2)
+            prev_close_price = list(df.tail(2).iloc[0])[3]
+            prev_DMA10 = round(list(df.tail(2).iloc[0])[8], 2)
+            if prev_close_price < prev_DMA10 and close_price > DMA_10:
+                DMA_change = 1
             try:
                 st_73 = st_value(df, length=7, multiplier=3)
                 st73_signal, st73_value = generate_st_signal(st_73, ticker)
@@ -60,7 +67,7 @@ def main():
                 st72_signal, st72_value = -1, -1
 
             var = {"ticker": ticker, "st73_signal": st73_signal, "st73_value": st73_value, "st72_signal": st72_signal,
-                "st72_value": st72_value, "close_price": round(close_price, 2), "DMA_200": round(DMA_200, 2)}
+                "st72_value": st72_value, "close_price": round(close_price, 2), "DMA_200": round(DMA_200, 2), "10DMA": DMA_10, "10DMA_change": DMA_change}
             indicator_signals.append(var)
         except Exception as e:
             print(f"ERROR :: Failed to get Historical data for {ticker} as the problem is {e}")
@@ -69,6 +76,7 @@ def main():
     st_73_dma_stocks = []
     st_72_stocks = []
     st_72_dma_stocks = []
+    DMA_change_stocks = []
     for i in indicator_signals:
         if i['st73_signal'] == 1:
             var = {"ticker": i['ticker'], "close_price": i['close_price'], "st73_value": i['st73_value'],
@@ -86,6 +94,10 @@ def main():
             var = {"ticker": i['ticker'], "close_price": i['close_price'], "st72_value": i['st72_value'],
                 "DMA_200": i["DMA_200"], "datee": today}
             st_72_dma_stocks.append(var)
+        if i['10DMA_change'] == 1 :
+            var = {"ticker": i['ticker'], "close_price": i['close_price'], "st73_value": i['st73_value'], "st72_value": i['st72_value'],
+                   "DMA_200": i["DMA_200"], "DMA_10": i["DMA_10"], "datee": today}
+            DMA_change_stocks.append(var)
 
     print(f"INFO  :: ST73 stocks being :: {st_73_stocks}")
     print(f"INFO  :: ST73 with 200 DMA :: {st_73_dma_stocks}")
