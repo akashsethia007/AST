@@ -47,7 +47,7 @@ def main():
             close_price = list(df.tail(1).iloc[0])[3]
             df['200DMA'] = df['Close'].rolling(window=200).mean()
             DMA_200 = round(list(df.tail(1).iloc[0])[7], 2)
-            df['10DMA'] = df['Close'].rolling(window=19).mean()
+            df['10DMA'] = df['Close'].rolling(window=10).mean()
             DMA_10 = round(list(df.tail(1).iloc[0])[8], 2)
             prev_close_price = list(df.tail(2).iloc[0])[3]
             prev_DMA10 = round(list(df.tail(2).iloc[0])[8], 2)
@@ -65,7 +65,6 @@ def main():
             except Exception as e:
                 print(f"ERROR:: Failed to get SuperTrend 72 value for {ticker}")
                 st72_signal, st72_value = -1, -1
-            print(DMA_10)
 
             var = {"ticker": ticker, "st73_signal": st73_signal, "st73_value": st73_value, "st72_signal": st72_signal,
                 "st72_value": st72_value, "close_price": round(close_price, 2), "DMA_200": round(DMA_200, 2), "DMA10": round(DMA_10,2), "10DMA_change": DMA_change}
@@ -79,25 +78,26 @@ def main():
     st_72_dma_stocks = []
     DMA_change_stocks = []
     for i in indicator_signals:
+        print(i)
         if i['st73_signal'] == 1:
             var = {"ticker": i['ticker'], "close_price": i['close_price'], "st73_value": i['st73_value'],
-                "DMA_200": i["DMA_200"], "datee": today}
+                "DMA_200": i["DMA_200"], "DMA_10": i["DMA10"], "datee": today}
             st_73_stocks.append(var)
         if i['st72_signal'] == 1:
             var = {"ticker": i['ticker'], "close_price": i['close_price'], "st72_value": i['st72_value'],
-                "DMA_200": i["DMA_200"], "datee": today}
+                "DMA_200": i["DMA_200"], "DMA_10": i["DMA10"], "datee": today}
             st_72_stocks.append(var)
         if i['st73_signal'] == 1 and i['close_price'] > i['DMA_200']:
             var = {"ticker": i['ticker'], "close_price": i['close_price'], "st73_value": i['st73_value'],
-                "DMA_200": i["DMA_200"], "datee": today}
+                "DMA_200": i["DMA_200"], "DMA_10": i["DMA10"], "datee": today}
             st_73_dma_stocks.append(var)
         if i['st72_signal'] == 1 and i['close_price'] > i['DMA_200']:
             var = {"ticker": i['ticker'], "close_price": i['close_price'], "st72_value": i['st72_value'],
-                "DMA_200": i["DMA_200"], "datee": today}
+                "DMA_200": i["DMA_200"], "DMA_10": i["DMA10"], "datee": today}
             st_72_dma_stocks.append(var)
         if i['10DMA_change'] == 1 :
             var = {"ticker": i['ticker'], "close_price": i['close_price'], "st73_value": i['st73_value'], "st72_value": i['st72_value'],
-                   "DMA_200": i["DMA_200"], "DMA_10": i["DMA_200"], "datee": today}
+                   "DMA_200": i["DMA_200"], "DMA_10": i["DMA10"], "datee": today}
             DMA_change_stocks.append(var)
 
     print(f"INFO  :: ST73 stocks being :: {st_73_stocks}")
