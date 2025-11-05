@@ -47,7 +47,7 @@ def main():
             close_price = list(df.tail(1).iloc[0])[3]
             df['200DMA'] = df['Close'].rolling(window=200).mean()
             DMA_200 = round(list(df.tail(1).iloc[0])[7], 2)
-            df['10DMA'] = df['Close'].rolling(window=10).mean()
+            df['10DMA'] = df['Close'].rolling(window=19).mean()
             DMA_10 = round(list(df.tail(1).iloc[0])[8], 2)
             prev_close_price = list(df.tail(2).iloc[0])[3]
             prev_DMA10 = round(list(df.tail(2).iloc[0])[8], 2)
