@@ -103,6 +103,7 @@ def main():
     print(f"INFO  :: ST73 with 200 DMA :: {st_73_dma_stocks}")
     print(f"INFO  :: ST72 stocks being :: {st_72_stocks}")
     print(f"INFO  :: ST72 with 200 DMA :: {st_72_dma_stocks}")
+    print(f"INFO  :: 10DMA change stocks being :: {DMA_change_stocks}")
     cwd = os.getcwd()
     dt = datetime.today().strftime('%Y%m%d')
     path_indicator_signals = '\\'.join(cwd.split('\\')[:-1]) + f"\\indicator_signals\\{dt}_indicator_signals.csv"
@@ -110,6 +111,7 @@ def main():
     path72 = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\st\\{dt}_st72.csv"
     path73dma = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\st\\{dt}_st73_dma.csv"
     path72dma = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\st\\{dt}_st72_dma.csv"
+    pathdmachange = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\st\\{dt}_10dma.csv"
 
     try:
         writeSTFiles(path_indicator_signals, indicator_signals)
@@ -134,6 +136,12 @@ def main():
         gen_buy_orders(st_72_stocks)
     else:
         print("INFO  :: No stocks in ST72 list")
+
+    if len(DMA_change_stocks) > 0:
+        print("INFO  :: Writing the 10 DMA change file")
+        writeSTFiles(pathdmachange, DMA_change_stocks)
+    else:
+        print("INFO  :: No stocks in 10 DMA change list")
 
     '''
     #generate GTT
