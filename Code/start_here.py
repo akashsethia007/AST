@@ -49,7 +49,6 @@ def main():
             DMA_200 = round(list(df.tail(1).iloc[0])[7], 2)
             df['10DMA'] = df['Close'].rolling(window=10).mean()
             DMA_10 = round(list(df.tail(1).iloc[0])[8], 2)
-            print(DMA_10)
             prev_close_price = list(df.tail(2).iloc[0])[3]
             prev_DMA10 = round(list(df.tail(2).iloc[0])[8], 2)
             if prev_close_price < prev_DMA10 and close_price > DMA_10:
@@ -66,6 +65,7 @@ def main():
             except Exception as e:
                 print(f"ERROR:: Failed to get SuperTrend 72 value for {ticker}")
                 st72_signal, st72_value = -1, -1
+            print(DMA_10)
 
             var = {"ticker": ticker, "st73_signal": st73_signal, "st73_value": st73_value, "st72_signal": st72_signal,
                 "st72_value": st72_value, "close_price": round(close_price, 2), "DMA_200": round(DMA_200, 2), "DMA10": round(DMA_10,2), "10DMA_change": DMA_change}
