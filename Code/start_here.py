@@ -28,8 +28,8 @@ def main():
     print(f"INFO  :: Started the execution at {datetime.now()}")
     today_date, hist_date = set_dates(400)
 
-    #ticker_list = update500tickers()
-    ticker_list = ['RELIANCE','HDFCBANK','BHARTIARTL','TCS','ICICIBANK','NAM-INDIA','TVSHLTD','DABUR'] #Hardcoded for testing purpose
+    ticker_list = update500tickers()
+    #ticker_list = ['RELIANCE','HDFCBANK','BHARTIARTL','TCS','ICICIBANK','NAM-INDIA','TVSHLTD','DABUR'] #Hardcoded for testing purpose
     print(f"INFO  :: Created the list of top MCAP companies at {datetime.now()}")
     indicator_signals = []
     st_73_signals = []
@@ -78,7 +78,6 @@ def main():
     st_72_dma_stocks = []
     DMA_change_stocks = []
     for i in indicator_signals:
-        print(i)
         if i['st73_signal'] == 1:
             var = {"ticker": i['ticker'], "close_price": i['close_price'], "st73_value": i['st73_value'],
                 "DMA_200": i["DMA_200"], "DMA_10": i["DMA10"], "datee": today}
