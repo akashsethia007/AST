@@ -67,7 +67,7 @@ def main():
                 st72_signal, st72_value = -1, -1
 
             var = {"ticker": ticker, "st73_signal": st73_signal, "st73_value": st73_value, "st72_signal": st72_signal,
-                "st72_value": st72_value, "close_price": round(close_price, 2), "DMA_200": round(DMA_200, 2), "10DMA": DMA_10, "10DMA_change": DMA_change}
+                "st72_value": st72_value, "close_price": round(close_price, 2), "DMA_200": round(DMA_200, 2), "10DMA": round(DMA_10,2), "10DMA_change": DMA_change}
             indicator_signals.append(var)
         except Exception as e:
             print(f"ERROR :: Failed to get Historical data for {ticker} as the problem is {e}")
