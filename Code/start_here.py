@@ -34,7 +34,7 @@ def main():
     path_st72 = '\\'.join(cwd) + f"\\data\\st\\{dt}_st72.csv"
     path_st73_dma = '\\'.join(cwd) + f"\\data\\st\\{dt}_st73_dma.csv"
     path_st72_dma = '\\'.join(cwd) + f"\\data\\st\\{dt}_st72_dma.csv"
-    path_dma_change = '\\'.join(cwd) + f"\\data\\st\\{dt}_10dma.csv"
+    path_dma_change = '\\'.join(cwd) + f"\\data\\10dma\\{dt}_10dma.csv"
     path_start_signal = '\\'.join(cwd) + f"\\data\\start\\{dt}_start_signal.csv"
     path_finish_signal = '\\'.join(cwd) + f"\\data\\start\\{dt}_finish_signal.csv"
     path_indicator_signals = '\\'.join(cwd) + f"\\indicator_signals\\{dt}_indicator_signals.csv"
@@ -65,7 +65,7 @@ def main():
             df['10DMA'] = df['Close'].rolling(window=10).mean()
             DMA_10 = round(list(df.tail(1).iloc[0])[8], 2)
             prev_close_price = list(df.tail(2).iloc[0])[3]
-            prev_DMA10 = round(list(df.tail(2).iloc[0])[8], 2)
+            prev_DMA10 = round(list(df.tail(2).iloc[0])[8], 3)
             if prev_close_price < prev_DMA10 and close_price > DMA_10:
                 DMA_change = 1
             try:
