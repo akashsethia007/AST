@@ -43,8 +43,8 @@ def main():
     print(f"INFO  :: Captured todays execution at {datetime.now()}")
 
     today_date, hist_date = set_dates(400)
-    ticker_list = update500tickers()
-    # ticker_list = ['RELIANCE','HDFCBANK','BHARTIARTL','TCS','ICICIBANK','BRITANNIA','TVSHLTD','DABUR'] #Hardcoded for testing purpose
+    #ticker_list = update500tickers()
+    ticker_list = ['RELIANCE','HDFCBANK','BHARTIARTL','TCS','ICICIBANK','BRITANNIA','TVSHLTD','DABUR'] #Hardcoded for testing purpose
     print(f"INFO  :: Created the list of top MCAP companies at {datetime.now()}")
     indicator_signals = []
     st_73_signals = []
@@ -60,12 +60,14 @@ def main():
         try:
             df = getHistDatanow(ticker, hist_date)
             close_price = list(df.tail(1).iloc[0])[3]
+            prev_close_price = list(df.tail(2).iloc[0])[3]
             df['200DMA'] = df['Close'].rolling(window=200).mean()
             DMA_200 = round(list(df.tail(1).iloc[0])[7], 2)
             df['10DMA'] = df['Close'].rolling(window=10).mean()
             DMA_10 = round(list(df.tail(1).iloc[0])[8], 2)
-            prev_close_price = list(df.tail(2).iloc[0])[3]
-            prev_DMA10 = round(list(df.tail(2).iloc[0])[8], 3)
+            prev_DMA10 = round(list(df.tail(2).iloc[0])[8], 2)
+            print(f"{ticker} + {close_price} + {prev_close_price} + {DMA_10} + {prev_DMA10}")
+
             if prev_close_price < prev_DMA10 and close_price > DMA_10:
                 DMA_change = 1
             try:
