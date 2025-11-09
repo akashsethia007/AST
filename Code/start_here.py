@@ -68,7 +68,7 @@ def main():
             prev_DMA10 = round(list(df.tail(2).iloc[0])[8], 2)
 
             if prev_close_price < prev_DMA10 and close_price > DMA_10:
-                print(f"{ticker} + {prev_close_price} + {prev_DMA10} + {close_price} + {DMA_10}")
+                print(f"{ticker} + {prev_close_price} < {prev_DMA10} + {close_price} > {DMA_10}")
                 DMA_change = 1
             try:
                 st_73 = st_value(df, length=7, multiplier=3)
