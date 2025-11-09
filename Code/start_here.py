@@ -58,6 +58,7 @@ def main():
             print(f"INFO  :: {round(counter * 100 / len(ticker_list), 2)}% done.")
         time.sleep(0.01)
         try:
+            DMA_change = 0
             df = getHistDatanow(ticker, hist_date)
             close_price = list(df.tail(1).iloc[0])[3]
             prev_close_price = list(df.tail(2).iloc[0])[3]
