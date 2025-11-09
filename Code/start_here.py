@@ -11,6 +11,7 @@ from utils.getHistData import getHistDatanow
 from utils.set_date import set_dates
 from utils.st_calculator import st_value
 from utils.writeSTFiles import writeSTFiles
+from utils.writeFiles import writeFiles
 
 today = datetime.today().strftime('%Y%m%d')
 
@@ -26,18 +27,16 @@ peewee_logger.handlers = []
 
 def main():
     print(f"INFO  :: Started the execution at {datetime.now()}")
-    dt = datetime.today().strftime('%Y%m%d')
     cwd = os.getcwd()
+    dt = datetime.today().strftime('%Y%m%d')
     path_start_signal = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\start\\{dt}_start_signal.csv"
-    os.makedirs(os.path.dirname(path_start_signal), exist_ok=True)
-    with open(path_start_signal, 'w') as f:
-        f.write(f"{dt}\n")
+    writeFiles(path_start_signal,f"{datetime.now()}\n" )
     print(f"INFO  :: Captured todays execution at {datetime.now()}")
 
     today_date, hist_date = set_dates(400)
 
-    ticker_list = update500tickers()
-    #ticker_list = ['RELIANCE','HDFCBANK','BHARTIARTL','TCS','ICICIBANK','NAM-INDIA','TVSHLTD','DABUR'] #Hardcoded for testing purpose
+    #ticker_list = update500tickers()
+    ticker_list = ['RELIANCE','HDFCBANK','BHARTIARTL','TCS','ICICIBANK','NAM-INDIA','TVSHLTD','DABUR'] #Hardcoded for testing purpose
     print(f"INFO  :: Created the list of top MCAP companies at {datetime.now()}")
     indicator_signals = []
     st_73_signals = []
@@ -161,7 +160,12 @@ def main():
     subprocess.run(["git", "commit", "-m", "'Updated the code'"], cwd=git_path)
     subprocess.run(["git", "push"], cwd=git_path)
 
+    path_finish_signal = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\start\\{dt}_finish_signal.csv"
+    os.makedirs(os.path.dirname(path_finish_signal), exist_ok=True)
+    with open(path_finish_signal, 'w') as f:
+        f.write(f"{datetime.now()}\n")
     print(f"INFO  :: Completed the execution at {datetime.now()}")
+
 
 
 if __name__ == "__main__":
