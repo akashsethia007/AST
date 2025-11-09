@@ -66,9 +66,9 @@ def main():
             df['10DMA'] = df['Close'].rolling(window=10).mean()
             DMA_10 = round(list(df.tail(1).iloc[0])[8], 2)
             prev_DMA10 = round(list(df.tail(2).iloc[0])[8], 2)
-            print(f"{ticker} + {close_price} + {prev_close_price} + {DMA_10} + {prev_DMA10}")
 
             if prev_close_price < prev_DMA10 and close_price > DMA_10:
+                print(f"{ticker} + {prev_close_price} + {prev_DMA10} + {close_price} + {DMA_10}")
                 DMA_change = 1
             try:
                 st_73 = st_value(df, length=7, multiplier=3)
