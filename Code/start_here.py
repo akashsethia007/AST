@@ -26,6 +26,14 @@ peewee_logger.handlers = []
 
 def main():
     print(f"INFO  :: Started the execution at {datetime.now()}")
+    dt = datetime.today().strftime('%Y%m%d')
+    cwd = os.getcwd()
+    path_start_signal = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\start\\{dt}_start_signal.csv"
+    os.makedirs(os.path.dirname(path_start_signal), exist_ok=True)
+    with open(path_start_signal, 'w') as f:
+        f.write(f"{dt}\n")
+    print(f"INFO  :: Captured todays execution at {datetime.now()}")
+
     today_date, hist_date = set_dates(400)
 
     ticker_list = update500tickers()
@@ -104,8 +112,7 @@ def main():
     print(f"INFO  :: ST72 stocks being :: {st_72_stocks}")
     print(f"INFO  :: ST72 with 200 DMA :: {st_72_dma_stocks}")
     print(f"INFO  :: 10DMA change stocks being :: {DMA_change_stocks}")
-    cwd = os.getcwd()
-    dt = datetime.today().strftime('%Y%m%d')
+
     path_indicator_signals = '\\'.join(cwd.split('\\')[:-1]) + f"\\indicator_signals\\{dt}_indicator_signals.csv"
     path73 = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\st\\{dt}_st73.csv"
     path72 = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\st\\{dt}_st72.csv"
