@@ -10,8 +10,8 @@ from utils.get500tickers import update500tickers
 from utils.getHistData import getHistDatanow
 from utils.set_date import set_dates
 from utils.st_calculator import st_value
-from utils.writeSTFiles import writeSTFiles
 from utils.writeFiles import writeFiles
+from utils.writeSTFiles import writeSTFiles
 
 today = datetime.today().strftime('%Y%m%d')
 
@@ -27,16 +27,24 @@ peewee_logger.handlers = []
 
 def main():
     print(f"INFO  :: Started the execution at {datetime.now()}")
-    cwd = os.getcwd()
     dt = datetime.today().strftime('%Y%m%d')
-    path_start_signal = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\start\\{dt}_start_signal.csv"
-    writeFiles(path_start_signal,f"{datetime.now()}\n" )
+    cwd = os.getcwd().split('\\')[:-1]
+
+    path_st73 = '\\'.join(cwd) + f"\\data\\st\\{dt}_st73.csv"
+    path_st72 = '\\'.join(cwd) + f"\\data\\st\\{dt}_st72.csv"
+    path_st73_dma = '\\'.join(cwd) + f"\\data\\st\\{dt}_st73_dma.csv"
+    path_st72_dma = '\\'.join(cwd) + f"\\data\\st\\{dt}_st72_dma.csv"
+    path_dma_change = '\\'.join(cwd) + f"\\data\\st\\{dt}_10dma.csv"
+    path_start_signal = '\\'.join(cwd) + f"\\data\\start\\{dt}_start_signal.csv"
+    path_finish_signal = '\\'.join(cwd) + f"\\data\\start\\{dt}_finish_signal.csv"
+    path_indicator_signals = '\\'.join(cwd) + f"\\indicator_signals\\{dt}_indicator_signals.csv"
+
+    writeFiles(path_start_signal, f"{datetime.now()}\n")
     print(f"INFO  :: Captured todays execution at {datetime.now()}")
 
     today_date, hist_date = set_dates(400)
-
-    #ticker_list = update500tickers()
-    ticker_list = ['RELIANCE','HDFCBANK','BHARTIARTL','TCS','ICICIBANK','BRITANNIA','TVSHLTD','DABUR'] #Hardcoded for testing purpose
+    ticker_list = update500tickers()
+    # ticker_list = ['RELIANCE','HDFCBANK','BHARTIARTL','TCS','ICICIBANK','BRITANNIA','TVSHLTD','DABUR'] #Hardcoded for testing purpose
     print(f"INFO  :: Created the list of top MCAP companies at {datetime.now()}")
     indicator_signals = []
     st_73_signals = []
@@ -74,7 +82,8 @@ def main():
                 st72_signal, st72_value = -1, -1
 
             var = {"ticker": ticker, "st73_signal": st73_signal, "st73_value": st73_value, "st72_signal": st72_signal,
-                "st72_value": st72_value, "close_price": round(close_price, 2), "DMA_200": round(DMA_200, 2), "DMA10": round(DMA_10,2), "10DMA_change": DMA_change}
+                   "st72_value": st72_value, "close_price": round(close_price, 2), "DMA_200": round(DMA_200, 2),
+                   "DMA10": round(DMA_10, 2), "10DMA_change": DMA_change}
             indicator_signals.append(var)
         except Exception as e:
             print(f"ERROR :: Failed to get Historical data for {ticker} as the problem is {e}")
@@ -87,23 +96,23 @@ def main():
     for i in indicator_signals:
         if i['st73_signal'] == 1:
             var = {"ticker": i['ticker'], "close_price": i['close_price'], "st73_value": i['st73_value'],
-                "DMA_200": i["DMA_200"], "DMA_10": i["DMA10"], "datee": today}
+                   "DMA_200": i["DMA_200"], "DMA_10": i["DMA10"], "datee": today}
             st_73_stocks.append(var)
         if i['st72_signal'] == 1:
             var = {"ticker": i['ticker'], "close_price": i['close_price'], "st72_value": i['st72_value'],
-                "DMA_200": i["DMA_200"], "DMA_10": i["DMA10"], "datee": today}
+                   "DMA_200": i["DMA_200"], "DMA_10": i["DMA10"], "datee": today}
             st_72_stocks.append(var)
         if i['st73_signal'] == 1 and i['close_price'] > i['DMA_200']:
             var = {"ticker": i['ticker'], "close_price": i['close_price'], "st73_value": i['st73_value'],
-                "DMA_200": i["DMA_200"], "DMA_10": i["DMA10"], "datee": today}
+                   "DMA_200": i["DMA_200"], "DMA_10": i["DMA10"], "datee": today}
             st_73_dma_stocks.append(var)
         if i['st72_signal'] == 1 and i['close_price'] > i['DMA_200']:
             var = {"ticker": i['ticker'], "close_price": i['close_price'], "st72_value": i['st72_value'],
-                "DMA_200": i["DMA_200"], "DMA_10": i["DMA10"], "datee": today}
-            st_72_dma_stocks.append(var)
-        if i['10DMA_change'] == 1 :
-            var = {"ticker": i['ticker'], "close_price": i['close_price'], "st73_value": i['st73_value'], "st72_value": i['st72_value'],
                    "DMA_200": i["DMA_200"], "DMA_10": i["DMA10"], "datee": today}
+            st_72_dma_stocks.append(var)
+        if i['10DMA_change'] == 1:
+            var = {"ticker": i['ticker'], "close_price": i['close_price'], "st73_value": i['st73_value'],
+                   "st72_value": i['st72_value'], "DMA_200": i["DMA_200"], "DMA_10": i["DMA10"], "datee": today}
             DMA_change_stocks.append(var)
 
     print(f"INFO  :: ST73 stocks being :: {st_73_stocks}")
@@ -112,22 +121,15 @@ def main():
     print(f"INFO  :: ST72 with 200 DMA :: {st_72_dma_stocks}")
     print(f"INFO  :: 10DMA change stocks being :: {DMA_change_stocks}")
 
-    path_indicator_signals = '\\'.join(cwd.split('\\')[:-1]) + f"\\indicator_signals\\{dt}_indicator_signals.csv"
-    path73 = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\st\\{dt}_st73.csv"
-    path72 = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\st\\{dt}_st72.csv"
-    path73dma = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\st\\{dt}_st73_dma.csv"
-    path72dma = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\st\\{dt}_st72_dma.csv"
-    pathdmachange = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\st\\{dt}_10dma.csv"
-
     try:
         writeSTFiles(path_indicator_signals, indicator_signals)
     except Exception as e:
         print(f"ERROR :: No ST tickers for this execution as {str(e)}")
     if len(st_73_stocks) > 0:
         print("INFO  :: Writing the ST73 file")
-        writeSTFiles(path73, st_73_stocks)
+        writeSTFiles(path_st73, st_73_stocks)
         if len(st_73_dma_stocks) > 0:
-            writeSTFiles(path73dma, st_73_dma_stocks)
+            writeSTFiles(path_st73_dma, st_73_dma_stocks)
         print("INFO  :: Generating buy orders for ST73")
         gen_buy_orders(st_73_stocks)
     else:
@@ -135,9 +137,9 @@ def main():
 
     if len(st_72_stocks) > 0:
         print("INFO  :: Writing the ST72 file")
-        writeSTFiles(path72, st_72_stocks)
+        writeSTFiles(path_st72, st_72_stocks)
         if len(st_72_dma_stocks) > 0:
-            writeSTFiles(path72dma, st_72_dma_stocks)
+            writeSTFiles(path_st72_dma, st_72_dma_stocks)
         print("INFO  :: Generating buy orders for ST72")
         gen_buy_orders(st_72_stocks)
     else:
@@ -145,25 +147,24 @@ def main():
 
     if len(DMA_change_stocks) > 0:
         print("INFO  :: Writing the 10 DMA change file")
-        writeSTFiles(pathdmachange, DMA_change_stocks)
+        writeSTFiles(path_dma_change, DMA_change_stocks)
     else:
         print("INFO  :: No stocks in 10 DMA change list")
 
-    '''
-    #generate GTT
-    #phase3 - > Integrate with Kite
-    phase4 -> update gtt
-    '''
     print("INFO  :: Pushing the changes now")
     git_path = '\\'.join(os.getcwd().split('\\')[:-1])
     subprocess.run(["git", "add", "."], cwd=git_path)
     subprocess.run(["git", "commit", "-m", "'Updated the code'"], cwd=git_path)
     subprocess.run(["git", "push"], cwd=git_path)
 
-    path_finish_signal = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\start\\{dt}_finish_signal.csv"
-    writeFiles(path_finish_signal,f"{datetime.now()}\n" )
+    writeFiles(path_finish_signal, f"{datetime.now()}\n")
     print(f"INFO  :: Completed the execution at {datetime.now()}")
 
+    '''
+    #generate GTT
+    #phase3 - > Integrate with Kite
+    phase4 -> update gtt
+    '''
 
 
 if __name__ == "__main__":
