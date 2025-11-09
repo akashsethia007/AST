@@ -161,9 +161,7 @@ def main():
     subprocess.run(["git", "push"], cwd=git_path)
 
     path_finish_signal = '\\'.join(cwd.split('\\')[:-1]) + f"\\data\\start\\{dt}_finish_signal.csv"
-    os.makedirs(os.path.dirname(path_finish_signal), exist_ok=True)
-    with open(path_finish_signal, 'w') as f:
-        f.write(f"{datetime.now()}\n")
+    writeFiles(path_finish_signal,f"{datetime.now()}\n" )
     print(f"INFO  :: Completed the execution at {datetime.now()}")
 
 
