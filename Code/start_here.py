@@ -123,41 +123,40 @@ def main():
 
     try:
         writeSTFiles(path_indicator_signals, indicator_signals)
+        if len(st_73_stocks) > 0:
+            print("INFO  :: Writing the ST73 file")
+            writeSTFiles(path_st73, st_73_stocks)
+            if len(st_73_dma_stocks) > 0:
+                writeSTFiles(path_st73_dma, st_73_dma_stocks)
+            print("INFO  :: Generating buy orders for ST73")
+            gen_buy_orders(st_73_stocks)
+        else:
+            print("INFO  :: No stocks in ST73 list")
+
+        if len(st_72_stocks) > 0:
+            print("INFO  :: Writing the ST72 file")
+            writeSTFiles(path_st72, st_72_stocks)
+            if len(st_72_dma_stocks) > 0:
+                writeSTFiles(path_st72_dma, st_72_dma_stocks)
+            print("INFO  :: Generating buy orders for ST72")
+            gen_buy_orders(st_72_stocks)
+        else:
+            print("INFO  :: No stocks in ST72 list")
+
+        if len(DMA_change_stocks) > 0:
+            print("INFO  :: Writing the 10 DMA change file")
+            writeSTFiles(path_dma_change, DMA_change_stocks)
+        else:
+            print("INFO  :: No stocks in 10 DMA change list")
     except Exception as e:
         print(f"ERROR :: No ST tickers for this execution as {str(e)}")
-    if len(st_73_stocks) > 0:
-        print("INFO  :: Writing the ST73 file")
-        writeSTFiles(path_st73, st_73_stocks)
-        if len(st_73_dma_stocks) > 0:
-            writeSTFiles(path_st73_dma, st_73_dma_stocks)
-        print("INFO  :: Generating buy orders for ST73")
-        gen_buy_orders(st_73_stocks)
-    else:
-        print("INFO  :: No stocks in ST73 list")
 
-    if len(st_72_stocks) > 0:
-        print("INFO  :: Writing the ST72 file")
-        writeSTFiles(path_st72, st_72_stocks)
-        if len(st_72_dma_stocks) > 0:
-            writeSTFiles(path_st72_dma, st_72_dma_stocks)
-        print("INFO  :: Generating buy orders for ST72")
-        gen_buy_orders(st_72_stocks)
-    else:
-        print("INFO  :: No stocks in ST72 list")
-
-    if len(DMA_change_stocks) > 0:
-        print("INFO  :: Writing the 10 DMA change file")
-        writeSTFiles(path_dma_change, DMA_change_stocks)
-    else:
-        print("INFO  :: No stocks in 10 DMA change list")
-
+    writeFiles(path_finish_signal, f"{datetime.now()}\n")
     print("INFO  :: Pushing the changes now")
     git_path = '\\'.join(os.getcwd().split('\\')[:-1])
     subprocess.run(["git", "add", "."], cwd=git_path)
     subprocess.run(["git", "commit", "-m", "'Updated the code'"], cwd=git_path)
     subprocess.run(["git", "push"], cwd=git_path)
-
-    writeFiles(path_finish_signal, f"{datetime.now()}\n")
     print(f"INFO  :: Completed the execution at {datetime.now()}")
 
     '''
