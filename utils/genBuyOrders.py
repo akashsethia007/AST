@@ -1,6 +1,7 @@
 from datetime import datetime
 import pandas as pd
 import os
+from utils.writeFiles import writeFiles
 
 global st_stocks
 cwd = os.getcwd()
@@ -32,7 +33,4 @@ def gen_buy_orders(st_stocks):
                 cnt = cnt+1
         dt = datetime.today().strftime('%Y%m%d')
         path = '\\'.join(cwd.split('\\')[:-1])+f"\\transactions\\{dt}\\{row['custid']}.csv"
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, 'w') as f:
-            for line in order_list:
-                f.write(f"{line}\n")
+        writeFiles(path, order_list)

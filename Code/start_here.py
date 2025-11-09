@@ -36,7 +36,7 @@ def main():
     today_date, hist_date = set_dates(400)
 
     #ticker_list = update500tickers()
-    ticker_list = ['RELIANCE','HDFCBANK','BHARTIARTL','TCS','ICICIBANK','NAM-INDIA','TVSHLTD','DABUR'] #Hardcoded for testing purpose
+    ticker_list = ['RELIANCE','HDFCBANK','BHARTIARTL','TCS','ICICIBANK','BRITANNIA','TVSHLTD','DABUR'] #Hardcoded for testing purpose
     print(f"INFO  :: Created the list of top MCAP companies at {datetime.now()}")
     indicator_signals = []
     st_73_signals = []
