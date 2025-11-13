@@ -24,11 +24,11 @@ peewee_logger.disabled = True
 peewee_logger.setLevel(logging.WARNING)
 peewee_logger.handlers = []
 
+dt = datetime.today().strftime('%Y%m%d')
+cwd = os.getcwd().split('\\')[:-1]
 
 def main():
     print(f"INFO  :: Started the execution at {datetime.now()}")
-    dt = datetime.today().strftime('%Y%m%d')
-    cwd = os.getcwd().split('\\')[:-1]
 
     path_st73 = '\\'.join(cwd) + f"\\data\\st\\{dt}_st73.csv"
     path_st72 = '\\'.join(cwd) + f"\\data\\st\\{dt}_st72.csv"
