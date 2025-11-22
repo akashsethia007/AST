@@ -27,17 +27,19 @@ peewee_logger.handlers = []
 dt = datetime.today().strftime('%Y%m%d')
 cwd = os.getcwd().split('\\')[:-1]
 
+path_st73 = '\\'.join(cwd) + f"\\data\\st\\{dt}_st73.csv"
+path_st72 = '\\'.join(cwd) + f"\\data\\st\\{dt}_st72.csv"
+path_st73_dma = '\\'.join(cwd) + f"\\data\\st\\{dt}_st73_dma.csv"
+path_st72_dma = '\\'.join(cwd) + f"\\data\\st\\{dt}_st72_dma.csv"
+path_dma_change = '\\'.join(cwd) + f"\\data\\10dma\\{dt}_10dma.csv"
+path_start_signal = '\\'.join(cwd) + f"\\data\\start\\{dt}_start_signal.csv"
+path_finish_signal = '\\'.join(cwd) + f"\\data\\start\\{dt}_finish_signal.csv"
+path_indicator_signals = '\\'.join(cwd) + f"\\indicator_signals\\{dt}_indicator_signals.csv"
+git_path = '\\'.join(os.getcwd().split('\\')[:-1])
+
+
 def main():
     print(f"INFO  :: Started the execution at {datetime.now()}")
-
-    path_st73 = '\\'.join(cwd) + f"\\data\\st\\{dt}_st73.csv"
-    path_st72 = '\\'.join(cwd) + f"\\data\\st\\{dt}_st72.csv"
-    path_st73_dma = '\\'.join(cwd) + f"\\data\\st\\{dt}_st73_dma.csv"
-    path_st72_dma = '\\'.join(cwd) + f"\\data\\st\\{dt}_st72_dma.csv"
-    path_dma_change = '\\'.join(cwd) + f"\\data\\10dma\\{dt}_10dma.csv"
-    path_start_signal = '\\'.join(cwd) + f"\\data\\start\\{dt}_start_signal.csv"
-    path_finish_signal = '\\'.join(cwd) + f"\\data\\start\\{dt}_finish_signal.csv"
-    path_indicator_signals = '\\'.join(cwd) + f"\\indicator_signals\\{dt}_indicator_signals.csv"
 
     writeFiles(path_start_signal, f"{datetime.now()}\n")
     print(f"INFO  :: Captured todays execution at {datetime.now()}")
@@ -47,10 +49,7 @@ def main():
     # ticker_list = ['MBEL','MFSL','SAMBHV','AEROENTER','ICICIBANK','BRITANNIA','TVSHLTD','DABUR'] #Hardcoded for testing purpose
     print(f"INFO  :: Created the list of top MCAP companies at {datetime.now()}")
     indicator_signals = []
-    st_73_signals = []
-    st_72_signals = []
     counter = 0
-    DMA_change = 0
     print(f"INFO  :: Starting Indicator calculations at {datetime.now()}")
     for ticker in ticker_list:
         counter = counter + 1
@@ -156,18 +155,23 @@ def main():
         print("INFO  :: No stocks in 10 DMA change list")
 
     writeFiles(path_finish_signal, f"{datetime.now()}\n")
-    print("INFO  :: Pushing the changes now")
-    git_path = '\\'.join(os.getcwd().split('\\')[:-1])
-    subprocess.run(["git", "add", "."], cwd=git_path)
-    subprocess.run(["git", "commit", "-m", "'Updated the code'"], cwd=git_path)
-    subprocess.run(["git", "push"], cwd=git_path)
+    git_actvity()
     print(f"INFO  :: Completed the execution at {datetime.now()}")
 
     '''
     #generate GTT
     #phase3 - > Integrate with Kite
-    phase4 -> update gtt
+    #phase4 -> update gtt
     '''
+def git_actvity():
+    print("INFO  :: Pushing the changes now")
+    subprocess.run(["git", "add", "."], cwd=git_path)
+    subprocess.run(["git", "commit", "-m", "'Updated the code'"], cwd=git_path)
+    subprocess.run(["git", "push"], cwd=git_path)
+
 
 if __name__ == "__main__":
-    main()
+    if os.path.isfile(path_finish_signal):
+        print(f"INFO  :: Already completed the execution for {dt}")
+    else:
+        main()
