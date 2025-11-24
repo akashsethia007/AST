@@ -175,4 +175,3 @@ if __name__ == "__main__":
         print(f"INFO  :: Already completed the execution for {dt}")
     else:
         main()
-    print("")
