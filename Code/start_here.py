@@ -159,6 +159,7 @@ def main():
     print(f"INFO  :: Completed the execution at {datetime.now()}")
 
     '''
+    #get 52 week brakout stocks
     #generate GTT
     #phase3 - > Integrate with Kite
     #phase4 -> update gtt
