@@ -46,8 +46,8 @@ def main():
     print(f"INFO  :: Captured todays execution at {datetime.now()}")
 
     today_date, hist_date = set_dates(400)
-    #ticker_list = update500tickers()
-    ticker_list = ['MBEL','MFSL','SAMBHV','AEROENTER','ICICIBANK','BRITANNIA','TVSHLTD','DABUR', 'SHRIPISTON'] #Hardcoded for testing purpose
+    ticker_list = update500tickers()
+    #ticker_list = ['MBEL','MFSL','SAMBHV','AEROENTER','ICICIBANK','BRITANNIA','TVSHLTD','DABUR', 'SHRIPISTON'] #Hardcoded for testing purpose
     print(f"INFO  :: Created the list of top MCAP companies at {datetime.now()}")
     indicator_signals = []
     counter = 0
@@ -68,7 +68,7 @@ def main():
             DMA_10 = round(list(df.tail(1).iloc[0])[8], 2)
             prev_DMA10 = round(list(df.tail(2).iloc[0])[8], 2)
             max_price = df['High'].max()
-            if max_price <= close_price:
+            if max_price <= prev_close_price:
                 year_high_brkt = 1
 
             if prev_close_price < prev_DMA10 and close_price > DMA_10:
