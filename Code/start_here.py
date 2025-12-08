@@ -167,6 +167,8 @@ def main():
     if len(year_high_brkt_stocks) > 0:
         print("INFO  :: Writing the yearly breakout stocks")
         writeSTFiles(path_yearly_brkt, year_high_brkt_stocks)
+    else:
+        print("INFO  :: No stocks with yearly breakout list")
 
     writeFiles(path_finish_signal, f"{datetime.now()}\n")
     git_actvity()
