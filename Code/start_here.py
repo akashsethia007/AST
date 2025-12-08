@@ -58,8 +58,7 @@ def main():
             print(f"INFO  :: {round(counter * 100 / len(ticker_list), 2)}% done.")
         time.sleep(0.01)
         try:
-            DMA_change = 0
-            year_high_brkt = 0
+            DMA_change = year_high_brkt = 0
             df = getHistDatanow(ticker, hist_date)
             close_price = list(df.tail(1).iloc[0])[3]
             prev_close_price = list(df.tail(2).iloc[0])[3]
@@ -90,17 +89,12 @@ def main():
 
             var = {"ticker": ticker, "st73_signal": st73_signal, "st73_value": st73_value, "st72_signal": st72_signal,
                    "st72_value": st72_value, "close_price": round(close_price, 2), "DMA_200": round(DMA_200, 2),
-                   "DMA10": round(DMA_10, 2), "10DMA_change": DMA_change, "year_high_brkt": year_high_brkt}
+                   "DMA10": round(DMA_10, 2), "10DMA_change": DMA_change, "year_high_brkt": [ close_price, max_price ,year_high_brkt]}
             indicator_signals.append(var)
         except Exception as e:
             print(f"ERROR :: Failed to get Historical data for {ticker} as the problem is {e}")
     print(f"INFO  :: Done with the execution at {datetime.now()}")
-    st_73_stocks = []
-    st_73_dma_stocks = []
-    st_72_stocks = []
-    st_72_dma_stocks = []
-    DMA_change_stocks = []
-    year_high_brkt_stocks = []
+    st_73_stocks = st_73_dma_stocks = st_72_stocks = st_72_dma_stocks = DMA_change_stocks = year_high_brkt_stocks = []
     for i in indicator_signals:
         if i['st73_signal'] == 1:
             var = {"ticker": i['ticker'], "close_price": i['close_price'], "st73_value": i['st73_value'],
