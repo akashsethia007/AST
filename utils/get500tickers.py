@@ -16,6 +16,7 @@ def update500tickers():
     for symbol in eq_symbol:
         time.sleep(0.01)
         try:
+            print(f"Doing for {symbol}")
             ticker = yf.Ticker(symbol)
             info = ticker.info
             market_cap = info.get('marketCap')
