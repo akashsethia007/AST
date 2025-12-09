@@ -13,6 +13,7 @@ from utils.st_calculator import st_value
 from utils.writeFiles import writeFiles
 from utils.writeSTFiles import writeSTFiles
 
+
 today = datetime.today().strftime('%Y%m%d')
 
 logger = logging.getLogger('yfinance')
