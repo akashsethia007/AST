@@ -13,7 +13,6 @@ from utils.st_calculator import st_value
 from utils.writeFiles import writeFiles
 from utils.writeSTFiles import writeSTFiles
 
-
 today = datetime.today().strftime('%Y%m%d')
 
 logger = logging.getLogger('yfinance')
@@ -28,16 +27,15 @@ peewee_logger.handlers = []
 dt = datetime.today().strftime('%Y%m%d')
 cwd = os.getcwd().split('\\')[:-1]
 
-git_path = '\\'.join(os.getcwd().split('\\')[:-1])
 path_st73 = '\\'.join(cwd) + f"\\data\\st\\{dt}_st73.csv"
 path_st72 = '\\'.join(cwd) + f"\\data\\st\\{dt}_st72.csv"
 path_st73_dma = '\\'.join(cwd) + f"\\data\\st\\{dt}_st73_dma.csv"
 path_st72_dma = '\\'.join(cwd) + f"\\data\\st\\{dt}_st72_dma.csv"
 path_dma_change = '\\'.join(cwd) + f"\\data\\10dma\\{dt}_10dma.csv"
-path_yearly_brkt = '\\'.join(cwd) + f"\\data\\yearly_brkt\\{dt}_yearly_brkt.csv"
 path_start_signal = '\\'.join(cwd) + f"\\data\\start\\{dt}_start_signal.csv"
 path_finish_signal = '\\'.join(cwd) + f"\\data\\start\\{dt}_finish_signal.csv"
 path_indicator_signals = '\\'.join(cwd) + f"\\indicator_signals\\{dt}_indicator_signals.csv"
+git_path = '\\'.join(os.getcwd().split('\\')[:-1])
 
 
 def main():
@@ -48,18 +46,18 @@ def main():
 
     today_date, hist_date = set_dates(400)
     ticker_list = update500tickers()
-    # ticker_list = ['MBEL','MFSL','SAMBHV','AEROENTER','ICICIBANK','BRITANNIA','TVSHLTD','DABUR', 'SHRIPISTON'] #Hardcoded for testing purpose
+    # ticker_list = ['MBEL','MFSL','SAMBHV','AEROENTER','ICICIBANK','BRITANNIA','TVSHLTD','DABUR'] #Hardcoded for testing purpose
     print(f"INFO  :: Created the list of top MCAP companies at {datetime.now()}")
     indicator_signals = []
     counter = 0
     print(f"INFO  :: Starting Indicator calculations at {datetime.now()}")
     for ticker in ticker_list:
         counter = counter + 1
-        if counter % 150 == 0:
+        if counter % 125 == 0:
             print(f"INFO  :: {round(counter * 100 / len(ticker_list), 2)}% done.")
         time.sleep(0.01)
         try:
-            DMA_change = year_high_brkt = 0
+            DMA_change = 0
             df = getHistDatanow(ticker, hist_date)
             close_price = list(df.tail(1).iloc[0])[3]
             prev_close_price = list(df.tail(2).iloc[0])[3]
@@ -68,9 +66,6 @@ def main():
             df['10DMA'] = df['Close'].rolling(window=10).mean()
             DMA_10 = round(list(df.tail(1).iloc[0])[8], 2)
             prev_DMA10 = round(list(df.tail(2).iloc[0])[8], 2)
-            max_price = df['High'].max()
-            if max_price <= prev_close_price:
-                year_high_brkt = 1
 
             if prev_close_price < prev_DMA10 and close_price > DMA_10:
                 DMA_change = 1
@@ -90,13 +85,16 @@ def main():
 
             var = {"ticker": ticker, "st73_signal": st73_signal, "st73_value": st73_value, "st72_signal": st72_signal,
                    "st72_value": st72_value, "close_price": round(close_price, 2), "DMA_200": round(DMA_200, 2),
-                   "DMA10": round(DMA_10, 2), "10DMA_change": DMA_change,
-                   "year_high_brkt": [close_price, max_price, year_high_brkt]}
+                   "DMA10": round(DMA_10, 2), "10DMA_change": DMA_change}
             indicator_signals.append(var)
         except Exception as e:
-            print(f"ERROR :: Failed to get Historical data for {ticker} and the problem is {e}")
+            print(f"ERROR :: Failed to get Historical data for {ticker} as the problem is {e}")
     print(f"INFO  :: Done with the execution at {datetime.now()}")
-    st_73_stocks = st_73_dma_stocks = st_72_stocks = st_72_dma_stocks = DMA_change_stocks = year_high_brkt_stocks = []
+    st_73_stocks = []
+    st_73_dma_stocks = []
+    st_72_stocks = []
+    st_72_dma_stocks = []
+    DMA_change_stocks = []
     for i in indicator_signals:
         if i['st73_signal'] == 1:
             var = {"ticker": i['ticker'], "close_price": i['close_price'], "st73_value": i['st73_value'],
@@ -118,18 +116,12 @@ def main():
             var = {"ticker": i['ticker'], "close_price": i['close_price'], "st73_value": i['st73_value'],
                    "st72_value": i['st72_value'], "DMA_200": i["DMA_200"], "DMA_10": i["DMA10"], "datee": today}
             DMA_change_stocks.append(var)
-        if i['year_high_brkt'] == 1:
-            var = {"ticker": i['ticker'], "close_price": i['close_price'], "st73_value": i['st73_value'],
-                   "st72_value": i['st72_value'], "DMA_200": i["DMA_200"], "DMA_10": i["DMA10"],
-                   year_high_brkt: i['year_high_brkt'], "datee": today}
-            year_high_brkt_stocks.append(var)
 
     print(f"INFO  :: ST73 stocks being :: {st_73_stocks}")
     print(f"INFO  :: ST73 with 200 DMA :: {st_73_dma_stocks}")
     print(f"INFO  :: ST72 stocks being :: {st_72_stocks}")
     print(f"INFO  :: ST72 with 200 DMA :: {st_72_dma_stocks}")
     print(f"INFO  :: 10DMA change stocks being :: {DMA_change_stocks}")
-    print(f"INFO  :: 52-Week / Yearly breakout stocks being :: {year_high_brkt_stocks}")
 
     try:
         writeSTFiles(path_indicator_signals, indicator_signals)
@@ -162,28 +154,19 @@ def main():
     else:
         print("INFO  :: No stocks in 10 DMA change list")
 
-    if len(year_high_brkt_stocks) > 0:
-        print("INFO  :: Writing the yearly breakout stocks")
-        writeSTFiles(path_yearly_brkt, year_high_brkt_stocks)
-    else:
-        print("INFO  :: No stocks with yearly breakout list")
-
     writeFiles(path_finish_signal, f"{datetime.now()}\n")
     git_actvity()
     print(f"INFO  :: Completed the execution at {datetime.now()}")
 
     '''
-    #get 52 week breakout stocks
     #generate GTT
     #phase3 - > Integrate with Kite
     #phase4 -> update gtt
     '''
-
-
 def git_actvity():
     print("INFO  :: Pushing the changes now")
     subprocess.run(["git", "add", "."], cwd=git_path)
-    subprocess.run(["git", "commit", "-m", "'Updated the code'"], cwd=git_path)
+    subprocess.run(["git", "commit", "-m", "Updated the code"], cwd=git_path)
     subprocess.run(["git", "push"], cwd=git_path)
 
 
