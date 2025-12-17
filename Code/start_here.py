@@ -80,7 +80,7 @@ def main():
                 st_72 = st_value(df, length=7, multiplier=2)
                 st72_signal, st72_value = generate_st_signal(st_72, ticker)
             except Exception as e:
-                print(f"ERROR:: Failed to get SuperTrend 72 value for {ticker}")
+                print(f"ERROR :: Failed to get SuperTrend 72 value for {ticker}")
                 st72_signal, st72_value = -1, -1
 
             var = {"ticker": ticker, "st73_signal": st73_signal, "st73_value": st73_value, "st72_signal": st72_signal,
