@@ -12,6 +12,7 @@ from utils.set_date import set_dates
 from utils.st_calculator import st_value
 from utils.writeFiles import writeFiles
 from utils.writeSTFiles import writeSTFiles
+from utils.get52weekHIgh import top52highs
 
 today = datetime.today().strftime('%Y%m%d')
 
@@ -45,15 +46,16 @@ def main():
     print(f"INFO  :: Captured todays execution at {datetime.now()}")
 
     today_date, hist_date = set_dates(400)
-    ticker_list = update500tickers()
-    # ticker_list = ['MBEL','MFSL','SAMBHV','AEROENTER','ICICIBANK','BRITANNIA','TVSHLTD','DABUR'] #Hardcoded for testing purpose
+    #ticker_list = update500tickers()
+    ticker_list = ['AMCL','MBEL','MFSL','SAMBHV','AEROENTER','ICICIBANK','BRITANNIA','TVSHLTD','DABUR'] #Hardcoded for testing purpose
     print(f"INFO  :: Created the list of top MCAP companies at {datetime.now()}")
     indicator_signals = []
     counter = 0
     print(f"INFO  :: Starting Indicator calculations at {datetime.now()}")
+    high_stks = top52highs(ticker_list)
     for ticker in ticker_list:
         counter = counter + 1
-        if counter % 125 == 0:
+        if counter % 150 == 0:
             print(f"INFO  :: {round(counter * 100 / len(ticker_list), 2)}% done.")
         time.sleep(0.01)
         try:
@@ -85,7 +87,7 @@ def main():
 
             var = {"ticker": ticker, "st73_signal": st73_signal, "st73_value": st73_value, "st72_signal": st72_signal,
                    "st72_value": st72_value, "close_price": round(close_price, 2), "DMA_200": round(DMA_200, 2),
-                   "DMA10": round(DMA_10, 2), "10DMA_change": DMA_change}
+                   "DMA10": round(DMA_10, 2), "10DMA_change": DMA_change, "topHigh" : high_stks.get('ticker')}
             indicator_signals.append(var)
         except Exception as e:
             print(f"ERROR :: Failed to get Historical data for {ticker} as the problem is {e}")
@@ -154,10 +156,6 @@ def main():
     else:
         print("INFO  :: No stocks in 10 DMA change list")
 
-    writeFiles(path_finish_signal, f"{datetime.now()}\n")
-    git_actvity()
-    print(f"INFO  :: Completed the execution at {datetime.now()}")
-
     '''
     #generate GTT
     #phase3 - > Integrate with Kite
@@ -175,3 +173,6 @@ if __name__ == "__main__":
         print(f"INFO  :: Already completed the execution for {dt}")
     else:
         main()
+        writeFiles(path_finish_signal, f"{datetime.now()}\n")
+        git_actvity()
+        print(f"INFO  :: Completed the execution at {datetime.now()}")

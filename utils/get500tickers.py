@@ -23,7 +23,7 @@ def update500tickers():
         except Exception as e:
             print(f"ERROR :: get500tickers couldnt get the data for {symbol} as {str(e)}")
         counter = counter + 1
-        if counter%500 == 0:
+        if counter%550 == 0:
             print(f"INFO  :: {round(counter*100/len(eq_symbol),2)} % done ")
 
     print(f"INFO  :: 100 % done ")
