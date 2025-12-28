@@ -32,6 +32,7 @@ path_st73 = '\\'.join(cwd) + f"\\data\\st\\{dt}_st73.csv"
 path_st72 = '\\'.join(cwd) + f"\\data\\st\\{dt}_st72.csv"
 path_st73_dma = '\\'.join(cwd) + f"\\data\\st\\{dt}_st73_dma.csv"
 path_st72_dma = '\\'.join(cwd) + f"\\data\\st\\{dt}_st72_dma.csv"
+path_top_high = '\\'.join(cwd) + f"\\data\\52weekHigh\\{dt}_52weekHigh.csv"
 path_dma_change = '\\'.join(cwd) + f"\\data\\10dma\\{dt}_10dma.csv"
 path_start_signal = '\\'.join(cwd) + f"\\data\\start\\{dt}_start_signal.csv"
 path_finish_signal = '\\'.join(cwd) + f"\\data\\start\\{dt}_finish_signal.csv"
@@ -46,8 +47,8 @@ def main():
     print(f"INFO  :: Captured todays execution at {datetime.now()}")
 
     today_date, hist_date = set_dates(400)
-    #ticker_list = update500tickers()
-    ticker_list = ['AMCL','MBEL','MFSL','SAMBHV','AEROENTER','ICICIBANK','BRITANNIA','TVSHLTD','DABUR'] #Hardcoded for testing purpose
+    ticker_list = update500tickers()
+    #ticker_list = ['AMCL','MBEL','MFSL','SAMBHV','HINDZINC','ICICIBANK','BRITANNIA','TVSHLTD','DABUR','ANONDITA'] #Hardcoded for testing purpose
     print(f"INFO  :: Created the list of top MCAP companies at {datetime.now()}")
     indicator_signals = []
     counter = 0
@@ -87,7 +88,7 @@ def main():
 
             var = {"ticker": ticker, "st73_signal": st73_signal, "st73_value": st73_value, "st72_signal": st72_signal,
                    "st72_value": st72_value, "close_price": round(close_price, 2), "DMA_200": round(DMA_200, 2),
-                   "DMA10": round(DMA_10, 2), "10DMA_change": DMA_change, "topHigh" : high_stks.get('ticker')}
+                   "DMA10": round(DMA_10, 2), "10DMA_change": DMA_change, "topHigh" : high_stks.get(ticker)}
             indicator_signals.append(var)
         except Exception as e:
             print(f"ERROR :: Failed to get Historical data for {ticker} as the problem is {e}")
@@ -97,6 +98,7 @@ def main():
     st_72_stocks = []
     st_72_dma_stocks = []
     DMA_change_stocks = []
+    top_high = []
     for i in indicator_signals:
         if i['st73_signal'] == 1:
             var = {"ticker": i['ticker'], "close_price": i['close_price'], "st73_value": i['st73_value'],
@@ -118,12 +120,17 @@ def main():
             var = {"ticker": i['ticker'], "close_price": i['close_price'], "st73_value": i['st73_value'],
                    "st72_value": i['st72_value'], "DMA_200": i["DMA_200"], "DMA_10": i["DMA10"], "datee": today}
             DMA_change_stocks.append(var)
+        if i['topHigh'] == 1:
+            var = {"ticker": i['ticker'], "close_price": i['close_price'], "st73_value": i['st73_value'],
+                   "st72_value": i['st72_value'], "DMA_200": i["DMA_200"], "DMA_10": i["DMA10"], "datee": today, "topHigh": i["topHigh"]}
+            top_high.append(var)
 
     print(f"INFO  :: ST73 stocks being :: {st_73_stocks}")
     print(f"INFO  :: ST73 with 200 DMA :: {st_73_dma_stocks}")
     print(f"INFO  :: ST72 stocks being :: {st_72_stocks}")
     print(f"INFO  :: ST72 with 200 DMA :: {st_72_dma_stocks}")
     print(f"INFO  :: 10DMA change stocks being :: {DMA_change_stocks}")
+    print(f"INFO  :: 52 week breakout stocks being :: {top_high}")
 
     try:
         writeSTFiles(path_indicator_signals, indicator_signals)
@@ -155,6 +162,12 @@ def main():
         writeSTFiles(path_dma_change, DMA_change_stocks)
     else:
         print("INFO  :: No stocks in 10 DMA change list")
+
+    if len(top_high) > 0:
+        print("INFO  :: Writing 52 week breakout file")
+        writeSTFiles(path_top_high, top_high)
+    else:
+        print("INFO  :: No 52 week breakout stocks")
 
     '''
     #generate GTT
