@@ -14,7 +14,7 @@ def update500tickers():
     Market_Cap = []
     counter = 0
     for symbol in eq_symbol:
-        time.sleep(0.01)
+        time.sleep(0.03)
         try:
             ticker = yf.Ticker(symbol)
             info = ticker.info
@@ -23,7 +23,7 @@ def update500tickers():
         except Exception as e:
             print(f"ERROR :: get500tickers couldnt get the data for {symbol} as {str(e)}")
         counter = counter + 1
-        if counter%550 == 0:
+        if counter%555 == 0:
             print(f"INFO  :: {round(counter*100/len(eq_symbol),2)} % done ")
 
     print(f"INFO  :: 100 % done ")
