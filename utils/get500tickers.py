@@ -14,7 +14,7 @@ def update500tickers():
     Market_Cap = []
     counter = 0
     for symbol in eq_symbol:
-        time.sleep(0.01)
+        time.sleep(0.05)
         try:
             ticker = yf.Ticker(symbol)
             info = ticker.info
