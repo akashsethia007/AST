@@ -3,6 +3,7 @@ import os
 import subprocess
 import time
 from datetime import datetime
+import pandas as pd
 
 from utils.genBuyOrders import gen_buy_orders
 from utils.gen_st_signal import generate_st_signal
@@ -49,6 +50,7 @@ def main():
     if os.path.isfile(path_500_list):
         print(f"INFO  :: Already compiled the stock list for {dt}")
         df = pd.read_csv(path_500_list)
+        ticker_list = df['Stock_Symbols'].to_list()
     else:
         ticker_list = update500tickers()
         # ticker_list = ['MBEL','MFSL','SAMBHV','AEROENTER','ICICIBANK','BRITANNIA','TVSHLTD','DABUR'] #Hardcoded for testing purpose
