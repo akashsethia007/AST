@@ -32,6 +32,7 @@ path_st72 = '\\'.join(cwd) + f"\\data\\st\\{dt}_st72.csv"
 path_st73_dma = '\\'.join(cwd) + f"\\data\\st\\{dt}_st73_dma.csv"
 path_st72_dma = '\\'.join(cwd) + f"\\data\\st\\{dt}_st72_dma.csv"
 path_dma_change = '\\'.join(cwd) + f"\\data\\10dma\\{dt}_10dma.csv"
+path_500_list = '\\'.join(cwd) + f"\\data\\nifty500list\\{dt}_stockList.csv"
 path_start_signal = '\\'.join(cwd) + f"\\data\\start\\{dt}_start_signal.csv"
 path_finish_signal = '\\'.join(cwd) + f"\\data\\start\\{dt}_finish_signal.csv"
 path_indicator_signals = '\\'.join(cwd) + f"\\indicator_signals\\{dt}_indicator_signals.csv"
@@ -45,8 +46,12 @@ def main():
     print(f"INFO  :: Captured todays execution at {datetime.now()}")
 
     today_date, hist_date = set_dates(400)
-    ticker_list = update500tickers()
-    # ticker_list = ['MBEL','MFSL','SAMBHV','AEROENTER','ICICIBANK','BRITANNIA','TVSHLTD','DABUR'] #Hardcoded for testing purpose
+    if os.path.isfile(path_500_list):
+        print(f"INFO  :: Already compiled the stock list for {dt}")
+        df = pd.read_csv(path_500_list)
+    else:
+        ticker_list = update500tickers()
+        # ticker_list = ['MBEL','MFSL','SAMBHV','AEROENTER','ICICIBANK','BRITANNIA','TVSHLTD','DABUR'] #Hardcoded for testing purpose
     print(f"INFO  :: Created the list of top MCAP companies at {datetime.now()}")
     indicator_signals = []
     counter = 0
