@@ -52,6 +52,7 @@ def main():
         df = pd.read_csv(path_500_list)
         ticker_list = df['Stock_Symbols'].to_list()
     else:
+        print(f"INFO  :: Creating stock list for {dt} as {path_500_list} is not present")
         ticker_list = update500tickers()
         # ticker_list = ['MBEL','MFSL','SAMBHV','AEROENTER','ICICIBANK','BRITANNIA','TVSHLTD','DABUR'] #Hardcoded for testing purpose
     print(f"INFO  :: Created the list of top MCAP companies at {datetime.now()}")

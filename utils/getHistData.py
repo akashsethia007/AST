@@ -7,7 +7,7 @@ def getHistDatanow(ticker,hist_date):
         ticker = ticker+".NS"
         ticker = yf.Ticker(ticker)
         data = ticker.history(start=hist_date)
-        time.sleep(0.05)
+        time.sleep(0.1)
 
     except Exception as e:
         print(f"ERROR: Failed to get the history data for {ticker} as {str(e)}")
