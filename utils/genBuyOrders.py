@@ -1,36 +1,40 @@
 from datetime import datetime
+from pathlib import Path
+
 import pandas as pd
-import os
+
 from utils.writeFiles import writeFiles
 
-global st_stocks
-cwd = os.getcwd()
+_CUSTOMERS_PATH = Path(__file__).resolve().parents[1] / "customers" / "custTxn.csv"
+
+
 def gen_buy_orders(st_stocks):
-    custMetadata_path = '\\'.join(cwd.split('\\')[:-1]) + f"\customers\custTxn.csv"
-    custMetadata = pd.read_csv(custMetadata_path, sep=';', engine='python')
-    custMetadata.reset_index(inplace=True)
-    for index, row in custMetadata.iterrows():
-        cnt = 0
-        order_list=[]
+    """Generate Zerodha Kite curl buy-order commands for each customer."""
+    cust_txn = pd.read_csv(_CUSTOMERS_PATH, sep=';', engine='python')
+    dt = datetime.today().strftime('%Y%m%d')
+    out_dir = Path(__file__).resolve().parents[1] / "transactions" / dt
+
+    for _, row in cust_txn.iterrows():
         api_key = row['broker']
-        daily_txn_limit = int(row['daily_txn_limit'])
-        for a in st_stocks:
-            txn_limit = int(row['txn_limit'] / a['close_price'])
-            tk = a['ticker']
-            if cnt < daily_txn_limit:
-                order = ("curl https://api.kite.trade/orders/regular \\"
-                    "-H \"X-Kite-Version: 3\" \\"
-                    f"-H \"Authorization: token api_key:{api_key}\" \\"
-                    f"-d \"tradingsymbol={tk}\" \\"
-                    "-d \"exchange=NSE\" \\"
-                    "-d \"transaction_type=BUY\" \\"
-                    "-d \"order_type=MARKET\" \\"
-                    f"-d \"quantity={int(round(txn_limit,0))} \" \\"
-                    "-d \"product=CNC\" \\"
-                    "-d \"validity=DAY\" "
-                    )
-                order_list.append(order)
-                cnt = cnt+1
-        dt = datetime.today().strftime('%Y%m%d')
-        path = '\\'.join(cwd.split('\\')[:-1])+f"\\transactions\\{dt}\\{row['custid']}.csv"
-        writeFiles(path, order_list)
+        daily_limit = int(row['daily_txn_limit'])
+        order_list = []
+
+        for stock in st_stocks[:daily_limit]:
+            qty = int(round(row['txn_limit'] / stock['close_price'], 0))
+            tk = stock['ticker']
+            order = (
+                f"curl https://api.kite.trade/orders/regular \\\n"
+                f"  -H \"X-Kite-Version: 3\" \\\n"
+                f"  -H \"Authorization: token api_key:{api_key}\" \\\n"
+                f"  -d \"tradingsymbol={tk}\" \\\n"
+                f"  -d \"exchange=NSE\" \\\n"
+                f"  -d \"transaction_type=BUY\" \\\n"
+                f"  -d \"order_type=MARKET\" \\\n"
+                f"  -d \"quantity={qty}\" \\\n"
+                f"  -d \"product=CNC\" \\\n"
+                f"  -d \"validity=DAY\""
+            )
+            order_list.append(order)
+
+        path = out_dir / f"{row['custid']}.csv"
+        writeFiles(str(path), order_list)
