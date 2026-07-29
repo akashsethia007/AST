@@ -43,7 +43,7 @@ PATH_IND_SIGNALS   = ROOT / "indicator_signals"     / f"{DT}_indicator_signals.c
 
 # How many threads to use for batch processing.
 # Each thread fetches a batch of BATCH_SIZE tickers in one HTTP call.
-_WORKERS = 20
+_WORKERS = 25
 
 
 # ---------------------------------------------------------------------------
