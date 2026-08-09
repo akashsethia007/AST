@@ -1,12 +1,11 @@
 import os
 
+
 def writeFiles(path, obj):
+    """Write a string or list of strings to a file, creating parent dirs as needed."""
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'w') as f:
         if isinstance(obj, str):
-            f.write(f"{obj}\n")
+            f.write(obj if obj.endswith('\n') else obj + '\n')
         else:
-            for line in obj:
-                f.write(f"{line}\n")
-#Add other file types and merge the same here...
-#Make sure to cover all file writes here
+            f.writelines(f"{line}\n" for line in obj)
