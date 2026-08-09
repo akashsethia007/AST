@@ -243,3 +243,4 @@ if __name__ == "__main__":
     else:
         main()
         git_activity()
+print("All Done")
