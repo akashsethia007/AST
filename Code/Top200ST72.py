@@ -120,6 +120,10 @@ OUTPUT_BACKTEST_LATEST = RESULTS_DIR / f"{_FILE_TAG}_backtest.csv"
 OUTPUT_BACKTEST_DATED  = DATED_DIR   / f"{DT}_{_FILE_TAG}_backtest.csv"
 OUTPUT_GREEN_LATEST    = RESULTS_DIR / f"{_FILE_TAG}_green_2bars.csv"
 OUTPUT_GREEN_DATED     = DATED_DIR   / f"{DT}_{_FILE_TAG}_green_2bars.csv"
+OUTPUT_EMA_LATEST      = RESULTS_DIR / f"{_FILE_TAG}_green_above_ema200.csv"
+OUTPUT_EMA_DATED       = DATED_DIR   / f"{DT}_{_FILE_TAG}_green_above_ema200.csv"
+OUTPUT_EMA_BOTH_LATEST = RESULTS_DIR / f"{_FILE_TAG}_green_above_ema50_ema200.csv"
+OUTPUT_EMA_BOTH_DATED  = DATED_DIR   / f"{DT}_{_FILE_TAG}_green_above_ema50_ema200.csv"
 
 
 # ---------------------------------------------------------------------------
@@ -442,19 +446,32 @@ def _check_green_flip(ticker: str) -> list[dict]:
     """
     For each ST config, check whether the ticker's SuperTrend flipped bullish
     exactly 2 bars ago (i.e. bar at iloc[-3]) on the configured timeframe.
+    Also computes the 200-period EMA on the last confirmed bar (iloc[-2])
+    so callers can filter for "price above 200 EMA".
 
     Bar positions:
       iloc[-1] = latest bar       (may still be live / incomplete intraday)
       iloc[-2] = 1 bar ago        (last fully closed bar)
-      iloc[-3] = 2 bars ago       ← this is the flip candidate
+      iloc[-3] = 2 bars ago       ← flip candidate
     """
-    scan_days  = max(90, _LOOKBACK_DAYS // 8)
-    hist_start = (datetime.today() - timedelta(days=scan_days)).strftime('%Y-%m-%d')
+    # Fetch enough history for 200-period EMA to be fully warm
+    # 200 bars of daily ≈ ~290 calendar days; add margin
+    ema_days   = max(300, _LOOKBACK_DAYS // 4)
+    hist_start = (datetime.today() - timedelta(days=ema_days)).strftime('%Y-%m-%d')
     hits: list[dict] = []
     try:
         df = yf.Ticker(f"{ticker}.NS").history(start=hist_start, interval=YF_INTERVAL)
-        if df is None or len(df) < _SCAN_OFFSET + 2:
+        if df is None or len(df) < max(_SCAN_OFFSET + 2, 200):
             return hits
+
+        # 200 and 50-period EMA on the last confirmed closed bar
+        closes      = df['Close'].ewm(span=200, adjust=False).mean()
+        ema200      = round(float(closes.iloc[-2]), 2)
+        ema50       = round(float(df['Close'].ewm(span=50, adjust=False).mean().iloc[-2]), 2)
+        close_price = round(float(df['Close'].iloc[-2]), 2)
+        above_ema200 = close_price > ema200
+        above_ema50  = close_price > ema50
+        above_both   = above_ema200 and above_ema50
 
         for length, mult in ST_PARAMS:
             st_val, st_dir = _compute_st(df, length, mult)
@@ -466,20 +483,24 @@ def _check_green_flip(ticker: str) -> list[dict]:
             if len(dirs) < _SCAN_OFFSET + 1:
                 continue
 
-            # iloc[-3] is the flip candle; iloc[-4] must have been bearish
             flip_dir   = int(dirs.iloc[-_SCAN_OFFSET])
             before_dir = int(dirs.iloc[-_SCAN_OFFSET - 1])
 
             if before_dir == -1 and flip_dir == 1:
                 flip_ts = dirs.index[-_SCAN_OFFSET]
                 hits.append({
-                    "ticker":      ticker,
-                    "st_config":   f"ST{length}{int(mult)}",
-                    "flip_date":   flip_ts.strftime('%Y-%m-%d %H:%M'
-                                                    if TIMEFRAME == '1h'
-                                                    else '%Y-%m-%d'),
-                    "close_price": round(float(df['Close'].iloc[-2]), 2),
-                    "st_value":    round(float(vals.iloc[-2]), 2),
+                    "ticker":        ticker,
+                    "st_config":     f"ST{length}{int(mult)}",
+                    "flip_date":     flip_ts.strftime('%Y-%m-%d %H:%M'
+                                                      if TIMEFRAME == '1h'
+                                                      else '%Y-%m-%d'),
+                    "close_price":   close_price,
+                    "st_value":      round(float(vals.iloc[-2]), 2),
+                    "ema_50":        ema50,
+                    "ema_200":       ema200,
+                    "above_ema50":   above_ema50,
+                    "above_ema200":  above_ema200,
+                    "above_both":    above_both,
                 })
     except Exception as e:
         print(f"  ERROR :: green-check failed for {ticker}: {e}")
@@ -507,6 +528,7 @@ def step4_find_green(top_tickers: list[str], top_df: pd.DataFrame) -> pd.DataFra
         print(f"  Finished : {_ts()}\n")
         return None
 
+    # ── Build and enrich the full green-flip DataFrame ────────────────────
     gdf = (
         pd.DataFrame(hits)
           .sort_values(['ticker', 'st_config'])
@@ -518,23 +540,53 @@ def step4_find_green(top_tickers: list[str], top_df: pd.DataFrame) -> pd.DataFra
     pnl_cols = top_df[['ticker', 'total_pnl', 'pct_return']].drop_duplicates('ticker')
     gdf = gdf.merge(pnl_cols, on='ticker', how='left')
 
-    # Sort by pct_return descending so best backtest performers appear first
+    # Sort by pct_return descending
     gdf = gdf.sort_values('pct_return', ascending=False).reset_index(drop=True)
     gdf.index += 1
 
-    # Column order: signal info first, then backtest performance
     col_order = ['ticker', 'pct_return', 'total_pnl', 'st_config',
-                 'flip_date', 'close_price', 'st_value']
+                 'flip_date', 'close_price', 'st_value',
+                 'ema_50', 'ema_200', 'above_ema50', 'above_ema200', 'above_both']
     gdf = gdf[[c for c in col_order if c in gdf.columns]]
 
-    print(f"\n  {len(gdf)} signal(s) found — ST flipped GREEN 2 {TF_LABEL.lower()} bars ago\n")
+    print(f"\n  {len(gdf)} signal(s) — ST flipped GREEN 2 {TF_LABEL.lower()} bars ago\n")
     print(gdf.to_string())
-
     gdf.to_csv(OUTPUT_GREEN_LATEST, index_label='rank')
     gdf.to_csv(OUTPUT_GREEN_DATED,  index_label='rank')
     print(f"\n  Saved → {OUTPUT_GREEN_LATEST}")
     print(f"  Saved → {OUTPUT_GREEN_DATED}")
-    print(f"  Finished : {_ts()}\n")
+
+    # ── Sub-list 1: ST green AND price above 200 EMA ──────────────────────
+    ema200_df = gdf[gdf['above_ema200'] == True].reset_index(drop=True)
+    ema200_df.index += 1
+    print(f"\n{'─'*60}")
+    print(f"  Sub-list 1 — ST green + above 200 EMA  ({len(ema200_df)} stock(s))")
+    print(f"{'─'*60}")
+    if not ema200_df.empty:
+        print(ema200_df.to_string())
+        ema200_df.to_csv(OUTPUT_EMA_LATEST, index_label='rank')
+        ema200_df.to_csv(OUTPUT_EMA_DATED,  index_label='rank')
+        print(f"\n  Saved → {OUTPUT_EMA_LATEST}")
+        print(f"  Saved → {OUTPUT_EMA_DATED}")
+    else:
+        print("  None of the green-flip stocks are above their 200 EMA.")
+
+    # ── Sub-list 2: ST green AND price above BOTH 50 EMA and 200 EMA ──────
+    both_df = gdf[gdf['above_both'] == True].reset_index(drop=True)
+    both_df.index += 1
+    print(f"\n{'─'*60}")
+    print(f"  Sub-list 2 — ST green + above 50 EMA + above 200 EMA  ({len(both_df)} stock(s))")
+    print(f"{'─'*60}")
+    if not both_df.empty:
+        print(both_df.to_string())
+        both_df.to_csv(OUTPUT_EMA_BOTH_LATEST, index_label='rank')
+        both_df.to_csv(OUTPUT_EMA_BOTH_DATED,  index_label='rank')
+        print(f"\n  Saved → {OUTPUT_EMA_BOTH_LATEST}")
+        print(f"  Saved → {OUTPUT_EMA_BOTH_DATED}")
+    else:
+        print("  None of the green-flip stocks are above both their 50 and 200 EMA.")
+
+    print(f"\n  Finished : {_ts()}\n")
     return gdf
 
 
@@ -587,5 +639,5 @@ def git_activity():
     subprocess.run(["git", "push"],                                  cwd=str(ROOT), check=False)
 
 if __name__ == "__main__":
-    #main()
+    main()
     git_activity()
