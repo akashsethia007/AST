@@ -571,6 +571,6 @@ def git_activity():
     subprocess.run(["git", "commit", "-m", f"Data update {DT}"],     cwd=str(ROOT), check=False)
     subprocess.run(["git", "push"],                                  cwd=str(ROOT), check=False)
 
-if __name__ == "__main__h":
+if __name__ == "__main__":
     main()
     git_activity()
