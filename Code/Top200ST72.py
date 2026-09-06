@@ -414,6 +414,12 @@ def step3_rank(all_rows: list[dict]) -> pd.DataFrame:
     top = top.reset_index(drop=True)
     top.index += 1
 
+    # Reorder columns: put pct_return and total_pnl upfront for readability
+    col_order = ['ticker', 'st_config', 'pct_return', 'total_pnl',
+                 'total_trades', 'winning_trades', 'win_pct',
+                 'capital_used', 'final_capital']
+    top = top[[c for c in col_order if c in top.columns]]
+
     pd.set_option('display.max_rows', TOP_N_RESULT)
     pd.set_option('display.float_format', '{:,.2f}'.format)
     print(f"\n  Top {len(top)} stocks  [{TF_LABEL} | {_ST_LABEL}]")
@@ -512,6 +518,15 @@ def step4_find_green(top_tickers: list[str], top_df: pd.DataFrame) -> pd.DataFra
     pnl_cols = top_df[['ticker', 'total_pnl', 'pct_return']].drop_duplicates('ticker')
     gdf = gdf.merge(pnl_cols, on='ticker', how='left')
 
+    # Sort by pct_return descending so best backtest performers appear first
+    gdf = gdf.sort_values('pct_return', ascending=False).reset_index(drop=True)
+    gdf.index += 1
+
+    # Column order: signal info first, then backtest performance
+    col_order = ['ticker', 'pct_return', 'total_pnl', 'st_config',
+                 'flip_date', 'close_price', 'st_value']
+    gdf = gdf[[c for c in col_order if c in gdf.columns]]
+
     print(f"\n  {len(gdf)} signal(s) found — ST flipped GREEN 2 {TF_LABEL.lower()} bars ago\n")
     print(gdf.to_string())
 
@@ -572,5 +587,5 @@ def git_activity():
     subprocess.run(["git", "push"],                                  cwd=str(ROOT), check=False)
 
 if __name__ == "__main__":
-    main()
+    #main()
     git_activity()
