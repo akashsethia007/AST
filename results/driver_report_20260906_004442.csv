@@ -1,0 +1,55 @@
+device_name,manufacturer,installed_version,installed_date,latest_version,status,download_url
+DellInstrumentation Device,Dell Technologies,2.9.1.0,2024-09-19,N/A,unknown,N/A
+System Firmware 0.1.38.1,"Dell, Inc.",0.1.38.1,2025-08-28,N/A,unknown,N/A
+Intel(R) Dynamic Tuning Manager,Intel,8.7.10802.26924,2022-04-11,N/A,unknown,N/A
+HID Keyboard Device,(Standard keyboards),10.0.26100.8972,2006-06-21,N/A,unknown,N/A
+Intel(R) HID Event Filter,Intel(R) Corporation,2.2.2.18,2025-11-19,N/A,unknown,N/A
+Trusted Platform Module 2.0,(Standard),10.0.26100.8972,2006-06-21,N/A,unknown,N/A
+Intel(R) Power Engine Plug-in,Intel Corporation,10.0.26100.9278,2006-06-21,N/A,unknown,N/A
+Intel Processor,Intel,10.0.26100.9278,2009-04-21,N/A,unknown,N/A
+STMicroelectronics 3-Axis Digital Accelerometer,STMicroelectronics,2.2.7.2,2020-02-14,N/A,unknown,N/A
+Intel(R) Serial IO GPIO Host Controller - INT34BB,Intel Corporation,30.100.2020.7,2020-05-12,N/A,unknown,N/A
+Intel(R) Ethernet Connection (10) I219-LM,Intel,12.19.2.66,2025-10-29,N/A,unknown,N/A
+Intel(R) SPI (flash) Controller - 02A4,INTEL,10.1.27.4,1968-07-18,N/A,unknown,N/A
+Intel(R) SMBus - 02A3,INTEL,10.1.27.4,1968-07-18,N/A,unknown,N/A
+Intel(R) Display Audio,Intel(R) Corporation,10.27.0.14,2024-04-29,N/A,unknown,N/A
+Realtek Audio Universal Service,Realtek,1.0.664.0,2023-10-31,N/A,unknown,N/A
+Realtek Asio Component,Realtek,1.0.0.10,2023-04-13,N/A,unknown,N/A
+Realtek Audio Effects Component,Realtek,13.0.6000.1097,2023-07-19,N/A,unknown,N/A
+Waves APO,Waves,6.2.0.15648,2024-02-13,N/A,unknown,N/A
+Detection Verification,Intel(R) Corporation,1.0.2283.0,2022-05-17,N/A,unknown,N/A
+Intel(R) Smart Sound Technology (Intel(R) SST) OED,Intel(R) Corporation,10.25.0.8130,2022-10-17,N/A,unknown,N/A
+Intel(R) Smart Sound Technology (Intel(R) SST) Audio Controller,Intel(R) Corporation,10.25.0.8130,2022-10-17,N/A,unknown,N/A
+Standard PS/2 Keyboard,(Standard keyboards),10.0.26100.8972,2006-06-21,N/A,unknown,N/A
+Intel(R) Dynamic Tuning Generic Participant,Intel,8.7.10802.26924,2022-04-11,N/A,unknown,N/A
+I/O LPC Controller - 0284 for Intel(R) On-Package Platform Controller Hub,INTEL,10.1.27.4,1968-07-18,N/A,unknown,N/A
+Realtek PCIE CardReader,Realtek Semiconductor Corp.,10.0.26200.21387,2025-12-27,N/A,unknown,N/A
+Intel(R) PCI Express Root Port #8 - 02BF,INTEL,10.1.27.4,1968-07-18,N/A,unknown,N/A
+Intel(R) Serial IO I2C Host Controller - 02C5,Intel Corporation,30.100.2020.7,2020-05-12,N/A,unknown,N/A
+Intel(R) Optane(TM) Memory and Storage Management Component,Intel Corporation,17.11.3.1010,2022-11-25,N/A,unknown,N/A
+Disk drive,(Standard disk drives),10.0.26100.8972,2006-06-21,N/A,unknown,N/A
+Intel(R) 400 Series Chipset Family SATA AHCI Controller,Intel Corporation,17.11.3.1010,2022-11-25,N/A,unknown,N/A
+Intel(R) Management and Security Application Local Management,Intel,2538.8.9.0,2025-09-14,N/A,unknown,N/A
+Intel(R) Active Management Technology - SOL,Intel,2516.8.0.0,2025-04-14,N/A,unknown,N/A
+Intel(R) Wireless Manageability,Intel,2543.98.178.0,2025-10-20,N/A,unknown,N/A
+Intel(R) Management Engine WMI Provider,Intel,2522.8.2.0,2025-05-27,N/A,unknown,N/A
+Intel(R) iCLS Client,Intel,1.79.88.0,2025-10-03,N/A,unknown,N/A
+Intel(R) Dynamic Application Loader Host Interface,Intel,1.46.2024.221,2024-03-31,N/A,unknown,N/A
+Intel(R) Management Engine Interface #1,Intel,2540.8.7.0,2025-09-28,N/A,unknown,N/A
+GlidePoint Generic HID Device,Cirque,4.0.0.7,2018-06-01,N/A,unknown,N/A
+Dell Touchpad,Alps Electric,10.3201.101.326,2022-01-13,N/A,unknown,N/A
+Intel(R) Serial IO I2C Host Controller - 02E9,Intel Corporation,30.100.2020.7,2020-05-12,N/A,unknown,N/A
+Intel(R) Serial IO I2C Host Controller - 02E8,Intel Corporation,30.100.2020.7,2020-05-12,N/A,unknown,N/A
+Intel(R) Wi-Fi 6 AX201 160MHz,Intel Corporation,24.40.0.4,2026-04-13,N/A,unknown,N/A
+Intel(R) Shared SRAM - 02EF,INTEL,10.1.27.4,1968-07-18,N/A,unknown,N/A
+Intel(R) Wireless Bluetooth(R),Intel Corporation,24.40.0.3,2026-03-28,N/A,unknown,N/A
+Dell ControlVault w/o Fingerprint Sensor,Dell,5.15.19.20,2025-10-15,N/A,unknown,N/A
+USB Root Hub (USB 3.0),(Standard USB HUBs),10.0.26100.9278,2026-08-24,N/A,unknown,N/A
+USB xHCI Compliant Host Controller,Generic USB xHCI Host Controller,10.0.26100.9278,2026-08-24,N/A,unknown,N/A
+Intel(R) Thermal Subsytem - 02F9,INTEL,10.1.27.4,1968-07-18,N/A,unknown,N/A
+Intel(R) Gaussian Mixture Model - 1911,INTEL,10.1.7.4,1968-07-18,N/A,unknown,N/A
+Intel(R) Dynamic Tuning Processor Participant,Intel,8.7.10802.26924,2022-04-11,N/A,unknown,N/A
+Intel(R) Graphics Command Center,Intel Corporation,31.0.101.2135,2025-03-06,N/A,unknown,N/A
+Intel(R) Graphics Control Panel,Intel Corporation,31.0.101.2135,2025-03-06,N/A,unknown,N/A
+Intel(R) UHD Graphics,Intel Corporation,31.0.101.2135,2025-03-06,N/A,unknown,N/A
+Intel(R) Host Bridge/DRAM Registers - 9B61,INTEL,10.1.30.4,1968-07-18,N/A,unknown,N/A
