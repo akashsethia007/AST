@@ -1,0 +1,3 @@
+rank,ticker,pct_return,total_pnl,st_config,flip_date,close_price,st_value,ema_50,ema_200,above_ema50,above_ema200,above_both
+1,RML,59.8,5979.84,ST72,2026-09-04,1390.0,1250.5,1117.5,956.0,True,True,True
+2,RML,59.8,5979.84,ST73,2026-09-04,1390.0,1182.16,1117.5,956.0,True,True,True

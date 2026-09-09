@@ -1,6 +1,0 @@
-rank,ticker,pct_return,total_pnl,st_config,flip_date,close_price,st_value,ema_50,ema_200,above_ema50,above_ema200,above_both
-1,ARVIND,101.39,10139.25,ST72,2026-09-02,562.5,525.1,529.41,446.25,True,True,True
-2,HMT,93.03,9302.74,ST72,2026-09-02,69.07,62.59,62.18,58.55,True,True,True
-3,ANTELOPUS,84.3,8430.4,ST72,2026-09-02,1013.3,905.9,817.97,702.65,True,True,True
-4,ANTELOPUS,84.3,8430.4,ST73,2026-09-02,1013.3,848.73,817.97,702.65,True,True,True
-5,NUVAMA,59.54,5953.86,ST73,2026-09-02,1839.2,1637.16,1748.29,1573.49,True,True,True

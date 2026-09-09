@@ -1,0 +1,5 @@
+rank,ticker,pct_return,total_pnl,st_config,flip_date,close_price,st_value,ema_50,ema_200,above_ema50,above_ema200,above_both
+1,63MOONS,241.97,24196.92,ST73,2026-09-04,868.25,761.22,774.63,714.48,True,True,True
+2,ZYDUSWELL,86.33,8632.64,ST73,2026-09-07,558.15,504.71,532.97,497.9,True,True,True
+3,TITAGARH,71.46,7145.85,ST73,2026-09-07,880.8,799.88,842.6,819.48,True,True,True
+4,RML,59.8,5979.84,ST73,2026-09-04,1390.0,1182.16,1117.5,956.0,True,True,True

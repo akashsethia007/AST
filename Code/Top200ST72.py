@@ -529,19 +529,14 @@ def step4_find_green(top_tickers: list[str], top_df: pd.DataFrame) -> pd.DataFra
         return None
 
     # ── Build and enrich the full green-flip DataFrame ────────────────────
+    pnl_cols = top_df[['ticker', 'total_pnl', 'pct_return']].drop_duplicates('ticker')
+
     gdf = (
         pd.DataFrame(hits)
-          .sort_values(['ticker', 'st_config'])
+          .merge(pnl_cols, on='ticker', how='left')
+          .sort_values('pct_return', ascending=False)
           .reset_index(drop=True)
     )
-    gdf.index += 1
-
-    # Join total_pnl and pct_return from the backtest results
-    pnl_cols = top_df[['ticker', 'total_pnl', 'pct_return']].drop_duplicates('ticker')
-    gdf = gdf.merge(pnl_cols, on='ticker', how='left')
-
-    # Sort by pct_return descending
-    gdf = gdf.sort_values('pct_return', ascending=False).reset_index(drop=True)
     gdf.index += 1
 
     col_order = ['ticker', 'pct_return', 'total_pnl', 'st_config',
@@ -549,42 +544,82 @@ def step4_find_green(top_tickers: list[str], top_df: pd.DataFrame) -> pd.DataFra
                  'ema_50', 'ema_200', 'above_ema50', 'above_ema200', 'above_both']
     gdf = gdf[[c for c in col_order if c in gdf.columns]]
 
-    print(f"\n  {len(gdf)} signal(s) — ST flipped GREEN 2 {TF_LABEL.lower()} bars ago\n")
-    print(gdf.to_string())
-    gdf.to_csv(OUTPUT_GREEN_LATEST, index_label='rank')
-    gdf.to_csv(OUTPUT_GREEN_DATED,  index_label='rank')
-    print(f"\n  Saved → {OUTPUT_GREEN_LATEST}")
-    print(f"  Saved → {OUTPUT_GREEN_DATED}")
+    # ── Helper: print + save one sub-list ─────────────────────────────────
+    def _save(df: pd.DataFrame, title: str, path_latest: Path, path_dated: Path):
+        df = df.reset_index(drop=True)
+        df.index += 1
+        print(f"\n{'─'*60}")
+        print(f"  {title}  ({len(df)} stock(s))")
+        print(f"{'─'*60}")
+        if df.empty:
+            print("  — none —")
+            return
+        print(df.to_string())
+        df.to_csv(path_latest, index_label='rank')
+        df.to_csv(path_dated,  index_label='rank')
+        print(f"  Saved → {path_latest}")
+        print(f"  Saved → {path_dated}")
 
-    # ── Sub-list 1: ST green AND price above 200 EMA ──────────────────────
-    ema200_df = gdf[gdf['above_ema200'] == True].reset_index(drop=True)
-    ema200_df.index += 1
-    print(f"\n{'─'*60}")
-    print(f"  Sub-list 1 — ST green + above 200 EMA  ({len(ema200_df)} stock(s))")
-    print(f"{'─'*60}")
-    if not ema200_df.empty:
-        print(ema200_df.to_string())
-        ema200_df.to_csv(OUTPUT_EMA_LATEST, index_label='rank')
-        ema200_df.to_csv(OUTPUT_EMA_DATED,  index_label='rank')
-        print(f"\n  Saved → {OUTPUT_EMA_LATEST}")
-        print(f"  Saved → {OUTPUT_EMA_DATED}")
-    else:
-        print("  None of the green-flip stocks are above their 200 EMA.")
+    # ── COMBINED (all ST configs) ──────────────────────────────────────────
+    print(f"\n  {len(gdf)} total signal(s) — ST flipped GREEN 2 {TF_LABEL.lower()} bars ago")
 
-    # ── Sub-list 2: ST green AND price above BOTH 50 EMA and 200 EMA ──────
-    both_df = gdf[gdf['above_both'] == True].reset_index(drop=True)
-    both_df.index += 1
-    print(f"\n{'─'*60}")
-    print(f"  Sub-list 2 — ST green + above 50 EMA + above 200 EMA  ({len(both_df)} stock(s))")
-    print(f"{'─'*60}")
-    if not both_df.empty:
-        print(both_df.to_string())
-        both_df.to_csv(OUTPUT_EMA_BOTH_LATEST, index_label='rank')
-        both_df.to_csv(OUTPUT_EMA_BOTH_DATED,  index_label='rank')
-        print(f"\n  Saved → {OUTPUT_EMA_BOTH_LATEST}")
-        print(f"  Saved → {OUTPUT_EMA_BOTH_DATED}")
-    else:
-        print("  None of the green-flip stocks are above both their 50 and 200 EMA.")
+    _save(gdf,
+          "ALL CONFIGS — ST green",
+          OUTPUT_GREEN_LATEST, OUTPUT_GREEN_DATED)
+
+    _save(gdf[gdf['above_ema200']],
+          "ALL CONFIGS — ST green + above 200 EMA",
+          OUTPUT_EMA_LATEST, OUTPUT_EMA_DATED)
+
+    _save(gdf[gdf['above_both']],
+          "ALL CONFIGS — ST green + above 50 EMA + above 200 EMA",
+          OUTPUT_EMA_BOTH_LATEST, OUTPUT_EMA_BOTH_DATED)
+
+    # ── PER ST CONFIG ──────────────────────────────────────────────────────
+    for length, mult in ST_PARAMS:
+        cfg_tag  = f"ST{length}{int(mult)}"
+        cfg_df   = gdf[gdf['st_config'] == cfg_tag]
+
+        # file-name fragments per config
+        cfg_file = f"{_TF_TAG}_{cfg_tag}"
+
+        _save(cfg_df,
+              f"{cfg_tag} — ST green",
+              RESULTS_DIR / f"{cfg_file}_green_2bars.csv",
+              DATED_DIR   / f"{DT}_{cfg_file}_green_2bars.csv")
+
+        _save(cfg_df[cfg_df['above_ema200']],
+              f"{cfg_tag} — ST green + above 200 EMA",
+              RESULTS_DIR / f"{cfg_file}_green_above_ema200.csv",
+              DATED_DIR   / f"{DT}_{cfg_file}_green_above_ema200.csv")
+
+        _save(cfg_df[cfg_df['above_both']],
+              f"{cfg_tag} — ST green + above 50 EMA + above 200 EMA",
+              RESULTS_DIR / f"{cfg_file}_green_above_ema50_ema200.csv",
+              DATED_DIR   / f"{DT}_{cfg_file}_green_above_ema50_ema200.csv")
+
+    # ── CONFIRMED BY ALL CONFIGS: above 50+200 EMA in every ST config ─────
+    # Find tickers that appear in the above_both list for EVERY config in ST_PARAMS
+    all_cfg_tags    = {f"ST{l}{int(m)}" for l, m in ST_PARAMS}
+    above_both_df   = gdf[gdf['above_both']]
+    # Count how many distinct configs each ticker satisfies
+    confirmed_tkrs  = (
+        above_both_df.groupby('ticker')['st_config']
+                     .apply(set)
+                     .where(lambda s: s.apply(lambda cfgs: all_cfg_tags.issubset(cfgs)))
+                     .dropna()
+                     .index.tolist()
+    )
+    confirmed_df = (
+        above_both_df[above_both_df['ticker'].isin(confirmed_tkrs)]
+        .reset_index(drop=True)
+    )
+
+    _save(confirmed_df,
+          f"CONFIRMED ALL CONFIGS ({'+'.join(sorted(all_cfg_tags))}) "
+          f"— ST green + above 50 EMA + above 200 EMA",
+          RESULTS_DIR / f"{_TF_TAG}_confirmed_all_green_above_ema50_ema200.csv",
+          DATED_DIR   / f"{DT}_{_TF_TAG}_confirmed_all_green_above_ema50_ema200.csv")
 
     print(f"\n  Finished : {_ts()}\n")
     return gdf
