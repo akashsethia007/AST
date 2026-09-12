@@ -1,3 +1,0 @@
-rank,ticker,pct_return,total_pnl,st_config,flip_date,close_price,st_value,ema_50,ema_200,above_ema50,above_ema200,above_both
-1,ADANIPORTS,46.89,4688.79,ST72,2026-09-09,1768.0,1680.65,1720.85,1647.44,True,True,True
-2,ADANIPORTS,46.89,4688.79,ST73,2026-09-09,1768.0,1638.37,1720.85,1647.44,True,True,True
