@@ -89,14 +89,14 @@ ST_PARAMS = [
 UNIVERSE_SIZE = 1000
 
 # How many top performers to keep in the final ranked list.
-TOP_N_RESULT = 365
+TOP_N_RESULT = 200
 
 # Starting capital in ₹ used for every (stock, ST config) backtest.
 # All stocks start with the same amount so results are directly comparable.
 CAPITAL_PER_TRADE = 10000
 
 # Parallel download threads and tickers-per-batch.
-MAX_WORKERS = 20
+MAX_WORKERS = 25
 BATCH_SIZE  = 50
 
 # ===========================================================================
