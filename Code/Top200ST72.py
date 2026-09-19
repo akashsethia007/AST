@@ -23,6 +23,24 @@ import logging
 import sys
 import subprocess
 
+import requests
+import certifi
+
+url = "https://nsewebsite-staging.nseindia.com/"
+
+response = requests.get(
+    url,
+    verify=certifi.where()
+)
+
+print(response.status_code)
+
+import requests
+
+r = requests.get(url, verify=False)
+print(r.status_code)
+
+
 # ---------------------------------------------------------------------------
 # Silence yfinance debug flood BEFORE any yfinance import
 # ---------------------------------------------------------------------------
