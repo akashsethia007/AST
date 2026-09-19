@@ -1,0 +1,3 @@
+rank,ticker,pct_return,total_pnl,st_config,flip_date,close_price,st_value,ema_50,ema_200,above_ema50,above_ema200,above_both
+1,IBULLSLTD,330.74,33073.72,ST72,2026-09-16,29.65,26.62,26.68,22.22,True,True,True
+2,MAXESTATES,134.68,13467.6,ST72,2026-09-15,572.1,506.6,487.21,443.4,True,True,True
