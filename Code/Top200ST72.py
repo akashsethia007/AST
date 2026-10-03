@@ -693,5 +693,6 @@ def git_activity():
     subprocess.run(["git", "push"],                                  cwd=str(ROOT), check=False)
 
 if __name__ == "__main__":
-    #main()
+    git_activity()
+    main()
     git_activity()
