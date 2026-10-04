@@ -1,3 +1,0 @@
-rank,ticker,pct_return,total_pnl,st_config,flip_date,close_price,st_value,ema_50,ema_200,above_ema50,above_ema200,above_both
-1,KIRLOSENG,157.25,15725.49,ST72,2026-09-29,2304.2,2048.25,2157.95,1830.67,True,True,True
-2,KIRLOSENG,157.25,15725.49,ST73,2026-09-29,2304.2,1922.8,2157.95,1830.67,True,True,True
