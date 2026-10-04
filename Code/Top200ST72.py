@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Top200ST72.py — Automated Stock Screener
 =========================================
@@ -117,12 +118,10 @@ DATED_DIR   = ROOT / "data" / "top200"
 RESULTS_DIR.mkdir(exist_ok=True)
 DATED_DIR.mkdir(parents=True, exist_ok=True)
 
-OUTPUT_BACKTEST_LATEST = RESULTS_DIR / f"{_FILE_TAG}_backtest.csv"
-OUTPUT_BACKTEST_DATED  = DATED_DIR   / f"{DT}_{_FILE_TAG}_backtest.csv"
-OUTPUT_SIGNALS_DATED   = DATED_DIR   / f"{DT}_{_FILE_TAG}_signals.csv"
+OUTPUT_SIGNALS_DATED   = DATED_DIR / f"{DT}_{_FILE_TAG}_signals.csv"
 
 # Checkpoint file — one per day per file-tag, lives in results/
-# Stores which steps completed and the intermediate data paths.
+# Stores intermediate data (universe list, top200 rankings) so steps can be skipped on resume.
 CHECKPOINT_FILE = RESULTS_DIR / f"{DT}_{_FILE_TAG}_checkpoint.json"
 
 
@@ -191,15 +190,15 @@ class _Progress:
 #   STEP 1 — Build universe: top UNIVERSE_SIZE stocks by market cap
 # ===========================================================================
 def step1_get_universe(n: int) -> list[str]:
-    print(f"\n{'─'*60}")
-    print(f"  STEP 1 — Universe: top {n} NSE stocks by market cap")
+    print(f"\n{'-'*60}")
+    print(f"  STEP 1 -- Universe: top {n} NSE stocks by market cap")
     print(f"  Started  : {_ts()}")
-    print(f"{'─'*60}")
+    print(f"{'-'*60}")
 
     eq = capital_market.equity_list()
     all_symbols = list(eq['SYMBOL'] + '.NS')
     total = len(all_symbols)
-    print(f"  {total} NSE symbols found — fetching market caps in batches of 100")
+    print(f"  {total} NSE symbols found -- fetching market caps in batches of 100")
 
     mcaps: list[dict] = []
     prog = _Progress(total, "mcap fetch")
@@ -222,7 +221,7 @@ def step1_get_universe(n: int) -> list[str]:
     df = pd.DataFrame(mcaps).dropna(subset=['Market_Cap'])
     df.sort_values('Market_Cap', ascending=False, inplace=True)
     universe = df.head(n)['Symbol'].str.split('.').str[0].tolist()
-    print(f"  → {len(universe)} tickers selected")
+    print(f"  -> {len(universe)} tickers selected")
     print(f"  Finished : {_ts()}\n")
     return universe
 
@@ -386,15 +385,15 @@ def step2_run_backtest(universe: list[str]) -> list[dict]:
     batches = [universe[i: i + BATCH_SIZE] for i in range(0, len(universe), BATCH_SIZE)]
     total   = len(universe)
 
-    print(f"{'─'*60}")
-    print(f"  STEP 2 — Download {TF_LABEL} OHLCV  ({START_DATE} → today)")
+    print(f"{'-'*60}")
+    print(f"  STEP 2 -- Download {TF_LABEL} OHLCV  ({START_DATE} to today)")
     print(f"  Started  : {_ts()}")
-    print(f"           {total} tickers  |  {len(batches)} batches × {BATCH_SIZE}  |  {MAX_WORKERS} workers")
-    print(f"{'─'*60}")
+    print(f"           {total} tickers  |  {len(batches)} batches x {BATCH_SIZE}  |  {MAX_WORKERS} workers")
+    print(f"{'-'*60}")
     dl_prog = _Progress(total, "download")
 
-    print(f"\n  STEP 2 (cont.) — Backtest {_ST_LABEL} on {TF_LABEL} bars")
-    print(f"           {len(ST_PARAMS)} ST config(s) × {total} stocks  "
+    print(f"\n  STEP 2 (cont.) -- Backtest {_ST_LABEL} on {TF_LABEL} bars")
+    print(f"           {len(ST_PARAMS)} ST config(s) x {total} stocks  "
           f"= up to {len(ST_PARAMS) * total} simulations")
     bt_prog = _Progress(total, "backtest")
 
@@ -423,10 +422,10 @@ def step2_run_backtest(universe: list[str]) -> list[dict]:
 #   STEP 3 — Rank and keep top TOP_N_RESULT stocks
 # ===========================================================================
 def step3_rank(all_rows: list[dict]) -> pd.DataFrame:
-    print(f"{'─'*60}")
-    print(f"  STEP 3 — Rank by % return, keep top {TOP_N_RESULT}")
+    print(f"{'-'*60}")
+    print(f"  STEP 3 -- Rank by % return, keep top {TOP_N_RESULT}")
     print(f"  Started  : {_ts()}")
-    print(f"{'─'*60}")
+    print(f"{'-'*60}")
 
     df = pd.DataFrame(all_rows)
     # Per ticker: keep the ST config that gave the highest % return
@@ -442,7 +441,7 @@ def step3_rank(all_rows: list[dict]) -> pd.DataFrame:
         top = profitable.head(TOP_N_RESULT)
     else:
         print(f"  NOTE :: Only {len(profitable)} profitable stocks found "
-              f"(needed {TOP_N_RESULT}) — showing all profitable + top losers")
+              f"(needed {TOP_N_RESULT}) -- showing all profitable + top losers")
         top = best.head(TOP_N_RESULT)
 
     top = top.reset_index(drop=True)
@@ -456,16 +455,9 @@ def step3_rank(all_rows: list[dict]) -> pd.DataFrame:
 
     pd.set_option('display.max_rows', TOP_N_RESULT)
     pd.set_option('display.float_format', '{:,.2f}'.format)
-    print(f"\n  Top {len(top)} stocks  [{TF_LABEL} | {_ST_LABEL}]")
-    print(f"  Columns: rank | ticker | best ST config | capital ₹{CAPITAL_PER_TRADE:,} | "
-          f"total P&L | % return | trades | wins | win %\n")
+    print(f"\n  Top {len(top)} stocks  [{TF_LABEL} | {_ST_LABEL}]\n")
     print(top.to_string())
-
-    top.to_csv(OUTPUT_BACKTEST_LATEST, index_label='rank')
-    top.to_csv(OUTPUT_BACKTEST_DATED,  index_label='rank')
-    print(f"\n  Saved → {OUTPUT_BACKTEST_LATEST}")
-    print(f"  Saved → {OUTPUT_BACKTEST_DATED}")
-    print(f"  Finished : {_ts()}\n")
+    print(f"\n  Finished : {_ts()}\n")
     return top
 
 
@@ -539,11 +531,11 @@ def _check_green_flip(ticker: str) -> list[dict]:
 
 def step4_find_green(top_tickers: list[str], top_df: pd.DataFrame) -> pd.DataFrame | None:
     total = len(top_tickers)
-    print(f"{'─'*60}")
-    print(f"  STEP 4 — ST green flip scan  (2 {TF_LABEL.lower()} bars ago)")
+    print(f"{'-'*60}")
+    print(f"  STEP 4 -- ST green flip scan  (2 {TF_LABEL.lower()} bars ago)")
     print(f"  Started  : {_ts()}")
-    print(f"           Checking {total} stocks × {len(ST_PARAMS)} ST config(s)")
-    print(f"{'─'*60}")
+    print(f"           Checking {total} stocks x {len(ST_PARAMS)} ST config(s)")
+    print(f"{'-'*60}")
     prog = _Progress(total, "green scan")
     hits: list[dict] = []
 
@@ -594,7 +586,7 @@ def step4_find_green(top_tickers: list[str], top_df: pd.DataFrame) -> pd.DataFra
     gdf = gdf[[c for c in col_order if c in gdf.columns]]
 
     # ── Print summary ──────────────────────────────────────────────────────
-    print(f"\n  {len(gdf)} signal(s) — ST flipped GREEN 2 {TF_LABEL.lower()} bars ago\n")
+    print(f"\n  {len(gdf)} signal(s) -- ST flipped GREEN 2 {TF_LABEL.lower()} bars ago\n")
     print(gdf.to_string())
 
     # Summary counts
@@ -604,11 +596,10 @@ def step4_find_green(top_tickers: list[str], top_df: pd.DataFrame) -> pd.DataFra
     print(f"    Above 50 + 200 EMA         : {gdf['above_both'].sum()}")
     print(f"    Confirmed (all ST configs) : {gdf['confirmed_all_configs'].sum()}")
 
-    # ── Save ONE file (latest overwrite + dated copy) ─────────────────────
-    gdf.to_csv(OUTPUT_SIGNALS_LATEST, index_label='rank')
-    gdf.to_csv(OUTPUT_SIGNALS_DATED,  index_label='rank')
-    print(f"\n  Saved → {OUTPUT_SIGNALS_LATEST}")
-    print(f"  Saved → {OUTPUT_SIGNALS_DATED}")
+    # ── Save dated signals file only ──────────────────────────────────────
+    print(gdf.to_string())
+    gdf.to_csv(OUTPUT_SIGNALS_DATED, index_label='rank')
+    print(f"\n  Saved -> {OUTPUT_SIGNALS_DATED}")
     print(f"  Finished : {_ts()}\n")
     return gdf
 
@@ -617,76 +608,78 @@ def step4_find_green(top_tickers: list[str], top_df: pd.DataFrame) -> pd.DataFra
 #   Entry point
 # ===========================================================================
 def main():
-    print(f"\n{'═'*60}")
+    print(f"\n{'='*60}")
     print(f"  NSE SuperTrend Stock Screener")
-    print(f"{'═'*60}")
-    print(f"  Timeframe      : {TIMEFRAME}  ({TF_LABEL} — {YF_INTERVAL})")
+    print(f"{'='*60}")
+    print(f"  Timeframe      : {TIMEFRAME}  ({TF_LABEL} - {YF_INTERVAL})")
     print(f"  ST configs     : {[f'ST{l}{int(m)}' for l, m in ST_PARAMS]}")
-    print(f"  Backtest range : {START_DATE} → today  ({YEARS_BACK} yr)")
+    print(f"  Backtest range : {START_DATE} to today  ({YEARS_BACK} yr)")
     print(f"  Universe       : top {UNIVERSE_SIZE} NSE stocks by market cap")
-    print(f"  Capital/trade  : ₹{CAPITAL_PER_TRADE:,}")
+    print(f"  Capital/trade  : Rs.{CAPITAL_PER_TRADE:,}")
     print(f"  Result size    : top {TOP_N_RESULT} stocks")
     print(f"  Run date       : {DT}")
-    print(f"{'═'*60}\n")
+    print(f"{'='*60}\n")
 
     t0   = datetime.now()
     ckpt = _ckpt_load()
-    last = ckpt.get('last_completed_step', 0)
 
+    # Derive the true resumable step from what data is actually present in
+    # the checkpoint — guards against stale files written by older versions.
+    def _effective_last(ckpt: dict) -> int:
+        if ckpt.get('top200'):   return 3
+        if ckpt.get('all_rows'): return 2
+        if ckpt.get('universe'): return 1
+        return 0
+
+    last = _effective_last(ckpt)
+    # Also respect step 4 completion flag
+    if ckpt.get('last_completed_step', 0) >= 4 and OUTPUT_SIGNALS_DATED.exists():
+        last = 4
+    print(f"This is the value of {last} and {ckpt.get('top200')}")
     if last > 0:
-        print(f"  [checkpoint] Resuming from STEP {last + 1}  "
-              f"(steps 1–{last} already completed today)\n")
+        print(f"  [checkpoint] Resuming -- steps 1-{last} already done, starting from STEP {last + 1}\n")
     else:
         print(f"  Script started : {_ts()}\n")
 
     # ── STEP 1: Universe ──────────────────────────────────────────────────
-    # Checkpoint key: 'universe_path' — path to saved universe CSV
-    UNIVERSE_CSV = RESULTS_DIR / f"{DT}_{_FILE_TAG}_universe.csv"
-
-    if last >= 1 and UNIVERSE_CSV.exists():
-        print(f"  [checkpoint] STEP 1 done — loading universe from {UNIVERSE_CSV}")
-        universe = pd.read_csv(UNIVERSE_CSV)['ticker'].tolist()
+    if last == 1 and ckpt.get('universe'):
+        print(f"  [checkpoint] STEP 1 done — universe loaded from checkpoint")
+        universe = ckpt['universe']
     else:
         universe = step1_get_universe(UNIVERSE_SIZE)
-        pd.DataFrame({'ticker': universe}).to_csv(UNIVERSE_CSV, index=False)
-        _ckpt_save({**ckpt, 'last_completed_step': 1,
-                    'universe_path': str(UNIVERSE_CSV)})
+        _ckpt_save({**ckpt, 'last_completed_step': 1, 'universe': universe})
 
     # ── STEP 2: Backtest ──────────────────────────────────────────────────
-    # Checkpoint key: uses OUTPUT_BACKTEST_DATED which is written at end of step3
-    BACKTEST_CSV = DATED_DIR / f"{DT}_{_FILE_TAG}_all_rows.csv"
-
-    if last >= 2 and BACKTEST_CSV.exists():
-        print(f"  [checkpoint] STEP 2 done — loading backtest rows from {BACKTEST_CSV}")
-        all_rows = pd.read_csv(BACKTEST_CSV).to_dict('records')
+    if last == 2 and ckpt.get('all_rows'):
+        print(f"  [checkpoint] STEP 2 done — backtest rows loaded from checkpoint")
+        all_rows = ckpt['all_rows']
     else:
         all_rows = step2_run_backtest(universe)
         if not all_rows:
             sys.exit("ERROR :: No backtest results — check internet connection.")
-        pd.DataFrame(all_rows).to_csv(BACKTEST_CSV, index=False)
-        _ckpt_save({**ckpt, 'last_completed_step': 2,
-                    'backtest_path': str(BACKTEST_CSV)})
+        _ckpt_save({**ckpt, 'last_completed_step': 2, 'all_rows': all_rows})
 
     # ── STEP 3: Rank ──────────────────────────────────────────────────────
-    if last >= 3 and OUTPUT_BACKTEST_DATED.exists():
-        print(f"  [checkpoint] STEP 3 done — loading ranked list from {OUTPUT_BACKTEST_DATED}")
-        top_df = pd.read_csv(OUTPUT_BACKTEST_DATED, index_col='rank')
+    if last == 3 and ckpt.get('top200'):
+        print(f"  [checkpoint] STEP 3 done — top200 loaded from checkpoint")
+        top_df = pd.DataFrame(ckpt['top200'])
     else:
         top_df = step3_rank(all_rows)
-        _ckpt_save({**ckpt, 'last_completed_step': 3})
+        _ckpt_save({**ckpt, 'last_completed_step': 3,
+                    'top200': top_df.reset_index().to_dict('records')})
 
     # ── STEP 4: Green-flip scan ───────────────────────────────────────────
-    if last >= 4 and OUTPUT_SIGNALS_DATED.exists():
+    if last == 4 and OUTPUT_SIGNALS_DATED.exists():
         print(f"  [checkpoint] STEP 4 done — signals already saved for today.")
     else:
         step4_find_green(top_df['ticker'].tolist(), top_df)
         _ckpt_save({**ckpt, 'last_completed_step': 4})
 
     elapsed = round((datetime.now() - t0).total_seconds() / 60, 1)
-    print(f"{'═'*60}")
+    print(f"{'='*60}")
     print(f"  Script finished : {_ts()}")
     print(f"  Total elapsed   : {elapsed} min")
-    print(f"{'═'*60}\n")
+    print(f"{'='*60}\n")
 
     # Clear checkpoint only after full successful run
     _ckpt_clear()
