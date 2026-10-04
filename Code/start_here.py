@@ -1,5 +1,12 @@
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
+# Ensure the project root (parent of Code/) is on sys.path so `utils` is importable
+# regardless of which directory the script is launched from.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 import logging
 import subprocess
 from concurrent.futures import ThreadPoolExecutor, as_completed

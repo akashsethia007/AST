@@ -119,7 +119,6 @@ DATED_DIR.mkdir(parents=True, exist_ok=True)
 
 OUTPUT_BACKTEST_LATEST = RESULTS_DIR / f"{_FILE_TAG}_backtest.csv"
 OUTPUT_BACKTEST_DATED  = DATED_DIR   / f"{DT}_{_FILE_TAG}_backtest.csv"
-OUTPUT_SIGNALS_LATEST  = RESULTS_DIR / f"{_FILE_TAG}_signals.csv"
 OUTPUT_SIGNALS_DATED   = DATED_DIR   / f"{DT}_{_FILE_TAG}_signals.csv"
 
 # Checkpoint file — one per day per file-tag, lives in results/
