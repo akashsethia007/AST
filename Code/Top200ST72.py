@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Top200ST72.py — Automated Stock Screener
 =========================================
@@ -22,6 +23,7 @@ from __future__ import annotations
 import logging
 import sys
 import subprocess
+
 
 # ---------------------------------------------------------------------------
 # Silence yfinance debug flood BEFORE any yfinance import
@@ -71,14 +73,14 @@ ST_PARAMS = [
 UNIVERSE_SIZE = 1000
 
 # How many top performers to keep in the final ranked list.
-TOP_N_RESULT = 365
+TOP_N_RESULT = 200
 
 # Starting capital in ₹ used for every (stock, ST config) backtest.
 # All stocks start with the same amount so results are directly comparable.
 CAPITAL_PER_TRADE = 10000
 
 # Parallel download threads and tickers-per-batch.
-MAX_WORKERS = 20
+MAX_WORKERS = 25
 BATCH_SIZE  = 50
 
 # ===========================================================================
@@ -116,14 +118,11 @@ DATED_DIR   = ROOT / "data" / "top200"
 RESULTS_DIR.mkdir(exist_ok=True)
 DATED_DIR.mkdir(parents=True, exist_ok=True)
 
-OUTPUT_BACKTEST_LATEST = RESULTS_DIR / f"{_FILE_TAG}_backtest.csv"
-OUTPUT_BACKTEST_DATED  = DATED_DIR   / f"{DT}_{_FILE_TAG}_backtest.csv"
-OUTPUT_GREEN_LATEST    = RESULTS_DIR / f"{_FILE_TAG}_green_2bars.csv"
-OUTPUT_GREEN_DATED     = DATED_DIR   / f"{DT}_{_FILE_TAG}_green_2bars.csv"
-OUTPUT_EMA_LATEST      = RESULTS_DIR / f"{_FILE_TAG}_green_above_ema200.csv"
-OUTPUT_EMA_DATED       = DATED_DIR   / f"{DT}_{_FILE_TAG}_green_above_ema200.csv"
-OUTPUT_EMA_BOTH_LATEST = RESULTS_DIR / f"{_FILE_TAG}_green_above_ema50_ema200.csv"
-OUTPUT_EMA_BOTH_DATED  = DATED_DIR   / f"{DT}_{_FILE_TAG}_green_above_ema50_ema200.csv"
+OUTPUT_SIGNALS_DATED   = DATED_DIR / f"{DT}_{_FILE_TAG}_signals.csv"
+
+# Checkpoint file — one per day per file-tag, lives in results/
+# Stores intermediate data (universe list, top200 rankings) so steps can be skipped on resume.
+CHECKPOINT_FILE = RESULTS_DIR / f"{DT}_{_FILE_TAG}_checkpoint.json"
 
 
 # ---------------------------------------------------------------------------
@@ -131,6 +130,36 @@ OUTPUT_EMA_BOTH_DATED  = DATED_DIR   / f"{DT}_{_FILE_TAG}_green_above_ema50_ema2
 # ---------------------------------------------------------------------------
 def _ts() -> str:
     return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+
+# ---------------------------------------------------------------------------
+# Checkpoint helpers
+# ---------------------------------------------------------------------------
+import json
+
+def _ckpt_load() -> dict:
+    """Load today's checkpoint. Returns {} if none exists."""
+    if CHECKPOINT_FILE.exists():
+        try:
+            with open(CHECKPOINT_FILE) as f:
+                data = json.load(f)
+            print(f"  [checkpoint] Loaded from {CHECKPOINT_FILE}")
+            return data
+        except Exception:
+            pass
+    return {}
+
+def _ckpt_save(state: dict):
+    """Persist checkpoint state to disk."""
+    state['updated_at'] = _ts()
+    with open(CHECKPOINT_FILE, 'w') as f:
+        json.dump(state, f, indent=2)
+
+def _ckpt_clear():
+    """Delete today's checkpoint (called on successful full completion)."""
+    if CHECKPOINT_FILE.exists():
+        CHECKPOINT_FILE.unlink()
+        print(f"  [checkpoint] Cleared {CHECKPOINT_FILE}")
 
 
 # ---------------------------------------------------------------------------
@@ -161,15 +190,15 @@ class _Progress:
 #   STEP 1 — Build universe: top UNIVERSE_SIZE stocks by market cap
 # ===========================================================================
 def step1_get_universe(n: int) -> list[str]:
-    print(f"\n{'─'*60}")
-    print(f"  STEP 1 — Universe: top {n} NSE stocks by market cap")
+    print(f"\n{'-'*60}")
+    print(f"  STEP 1 -- Universe: top {n} NSE stocks by market cap")
     print(f"  Started  : {_ts()}")
-    print(f"{'─'*60}")
+    print(f"{'-'*60}")
 
     eq = capital_market.equity_list()
     all_symbols = list(eq['SYMBOL'] + '.NS')
     total = len(all_symbols)
-    print(f"  {total} NSE symbols found — fetching market caps in batches of 100")
+    print(f"  {total} NSE symbols found -- fetching market caps in batches of 100")
 
     mcaps: list[dict] = []
     prog = _Progress(total, "mcap fetch")
@@ -192,7 +221,7 @@ def step1_get_universe(n: int) -> list[str]:
     df = pd.DataFrame(mcaps).dropna(subset=['Market_Cap'])
     df.sort_values('Market_Cap', ascending=False, inplace=True)
     universe = df.head(n)['Symbol'].str.split('.').str[0].tolist()
-    print(f"  → {len(universe)} tickers selected")
+    print(f"  -> {len(universe)} tickers selected")
     print(f"  Finished : {_ts()}\n")
     return universe
 
@@ -426,16 +455,9 @@ def step3_rank(all_rows: list[dict]) -> pd.DataFrame:
 
     pd.set_option('display.max_rows', TOP_N_RESULT)
     pd.set_option('display.float_format', '{:,.2f}'.format)
-    print(f"\n  Top {len(top)} stocks  [{TF_LABEL} | {_ST_LABEL}]")
-    print(f"  Columns: rank | ticker | best ST config | capital ₹{CAPITAL_PER_TRADE:,} | "
-          f"total P&L | % return | trades | wins | win %\n")
+    print(f"\n  Top {len(top)} stocks  [{TF_LABEL} | {_ST_LABEL}]\n")
     print(top.to_string())
-
-    top.to_csv(OUTPUT_BACKTEST_LATEST, index_label='rank')
-    top.to_csv(OUTPUT_BACKTEST_DATED,  index_label='rank')
-    print(f"\n  Saved → {OUTPUT_BACKTEST_LATEST}")
-    print(f"  Saved → {OUTPUT_BACKTEST_DATED}")
-    print(f"  Finished : {_ts()}\n")
+    print(f"\n  Finished : {_ts()}\n")
     return top
 
 
@@ -528,7 +550,7 @@ def step4_find_green(top_tickers: list[str], top_df: pd.DataFrame) -> pd.DataFra
         print(f"  Finished : {_ts()}\n")
         return None
 
-    # ── Build and enrich the full green-flip DataFrame ────────────────────
+    # ── Build master signals DataFrame ────────────────────────────────────
     pnl_cols = top_df[['ticker', 'total_pnl', 'pct_return']].drop_duplicates('ticker')
 
     gdf = (
@@ -539,89 +561,45 @@ def step4_find_green(top_tickers: list[str], top_df: pd.DataFrame) -> pd.DataFra
     )
     gdf.index += 1
 
-    col_order = ['ticker', 'pct_return', 'total_pnl', 'st_config',
-                 'flip_date', 'close_price', 'st_value',
-                 'ema_50', 'ema_200', 'above_ema50', 'above_ema200', 'above_both']
+    # Mark tickers that flipped green on ALL ST configs simultaneously
+    all_cfg_tags = {f"ST{l}{int(m)}" for l, m in ST_PARAMS}
+    confirmed_set = (
+        gdf[gdf['above_both']]
+          .groupby('ticker')['st_config']
+          .apply(set)
+          .where(lambda s: s.apply(lambda cfgs: all_cfg_tags.issubset(cfgs)))
+          .dropna()
+          .index
+    )
+    gdf['confirmed_all_configs'] = gdf['ticker'].isin(confirmed_set)
+
+    # Final column order — all indicators in one place
+    col_order = [
+        'ticker', 'date', 'st_config', 'flip_date',
+        'close_price', 'st_value',
+        'ema_50', 'ema_200',
+        'above_ema50', 'above_ema200', 'above_both', 'confirmed_all_configs',
+        'pct_return', 'total_pnl',
+    ]
+    # add date column
+    gdf.insert(1, 'date', DT)
     gdf = gdf[[c for c in col_order if c in gdf.columns]]
 
-    # ── Helper: print + save one sub-list ─────────────────────────────────
-    def _save(df: pd.DataFrame, title: str, path_latest: Path, path_dated: Path):
-        df = df.reset_index(drop=True)
-        df.index += 1
-        print(f"\n{'─'*60}")
-        print(f"  {title}  ({len(df)} stock(s))")
-        print(f"{'─'*60}")
-        if df.empty:
-            print("  — none —")
-            return
-        print(df.to_string())
-        df.to_csv(path_latest, index_label='rank')
-        df.to_csv(path_dated,  index_label='rank')
-        print(f"  Saved → {path_latest}")
-        print(f"  Saved → {path_dated}")
+    # ── Print summary ──────────────────────────────────────────────────────
+    print(f"\n  {len(gdf)} signal(s) — ST flipped GREEN 2 {TF_LABEL.lower()} bars ago\n")
+    print(gdf.to_string())
 
-    # ── COMBINED (all ST configs) ──────────────────────────────────────────
-    print(f"\n  {len(gdf)} total signal(s) — ST flipped GREEN 2 {TF_LABEL.lower()} bars ago")
+    # Summary counts
+    print(f"\n  Summary:")
+    print(f"    Total green flips          : {len(gdf)}")
+    print(f"    Above 200 EMA              : {gdf['above_ema200'].sum()}")
+    print(f"    Above 50 + 200 EMA         : {gdf['above_both'].sum()}")
+    print(f"    Confirmed (all ST configs) : {gdf['confirmed_all_configs'].sum()}")
 
-    _save(gdf,
-          "ALL CONFIGS — ST green",
-          OUTPUT_GREEN_LATEST, OUTPUT_GREEN_DATED)
-
-    _save(gdf[gdf['above_ema200']],
-          "ALL CONFIGS — ST green + above 200 EMA",
-          OUTPUT_EMA_LATEST, OUTPUT_EMA_DATED)
-
-    _save(gdf[gdf['above_both']],
-          "ALL CONFIGS — ST green + above 50 EMA + above 200 EMA",
-          OUTPUT_EMA_BOTH_LATEST, OUTPUT_EMA_BOTH_DATED)
-
-    # ── PER ST CONFIG ──────────────────────────────────────────────────────
-    for length, mult in ST_PARAMS:
-        cfg_tag  = f"ST{length}{int(mult)}"
-        cfg_df   = gdf[gdf['st_config'] == cfg_tag]
-
-        # file-name fragments per config
-        cfg_file = f"{_TF_TAG}_{cfg_tag}"
-
-        _save(cfg_df,
-              f"{cfg_tag} — ST green",
-              RESULTS_DIR / f"{cfg_file}_green_2bars.csv",
-              DATED_DIR   / f"{DT}_{cfg_file}_green_2bars.csv")
-
-        _save(cfg_df[cfg_df['above_ema200']],
-              f"{cfg_tag} — ST green + above 200 EMA",
-              RESULTS_DIR / f"{cfg_file}_green_above_ema200.csv",
-              DATED_DIR   / f"{DT}_{cfg_file}_green_above_ema200.csv")
-
-        _save(cfg_df[cfg_df['above_both']],
-              f"{cfg_tag} — ST green + above 50 EMA + above 200 EMA",
-              RESULTS_DIR / f"{cfg_file}_green_above_ema50_ema200.csv",
-              DATED_DIR   / f"{DT}_{cfg_file}_green_above_ema50_ema200.csv")
-
-    # ── CONFIRMED BY ALL CONFIGS: above 50+200 EMA in every ST config ─────
-    # Find tickers that appear in the above_both list for EVERY config in ST_PARAMS
-    all_cfg_tags    = {f"ST{l}{int(m)}" for l, m in ST_PARAMS}
-    above_both_df   = gdf[gdf['above_both']]
-    # Count how many distinct configs each ticker satisfies
-    confirmed_tkrs  = (
-        above_both_df.groupby('ticker')['st_config']
-                     .apply(set)
-                     .where(lambda s: s.apply(lambda cfgs: all_cfg_tags.issubset(cfgs)))
-                     .dropna()
-                     .index.tolist()
-    )
-    confirmed_df = (
-        above_both_df[above_both_df['ticker'].isin(confirmed_tkrs)]
-        .reset_index(drop=True)
-    )
-
-    _save(confirmed_df,
-          f"CONFIRMED ALL CONFIGS ({'+'.join(sorted(all_cfg_tags))}) "
-          f"— ST green + above 50 EMA + above 200 EMA",
-          RESULTS_DIR / f"{_TF_TAG}_confirmed_all_green_above_ema50_ema200.csv",
-          DATED_DIR   / f"{DT}_{_TF_TAG}_confirmed_all_green_above_ema50_ema200.csv")
-
-    print(f"\n  Finished : {_ts()}\n")
+    # ── Save dated signals file only ──────────────────────────────────────
+    gdf.to_csv(OUTPUT_SIGNALS_DATED, index_label='rank')
+    print(f"\n  Saved → {OUTPUT_SIGNALS_DATED}")
+    print(f"  Finished : {_ts()}\n")
     return gdf
 
 
@@ -629,50 +607,98 @@ def step4_find_green(top_tickers: list[str], top_df: pd.DataFrame) -> pd.DataFra
 #   Entry point
 # ===========================================================================
 def main():
-    print(f"\n{'═'*60}")
+    print(f"\n{'='*60}")
     print(f"  NSE SuperTrend Stock Screener")
-    print(f"{'═'*60}")
-    print(f"  Timeframe      : {TIMEFRAME}  ({TF_LABEL} — {YF_INTERVAL})")
+    print(f"{'='*60}")
+    print(f"  Timeframe      : {TIMEFRAME}  ({TF_LABEL} - {YF_INTERVAL})")
     print(f"  ST configs     : {[f'ST{l}{int(m)}' for l, m in ST_PARAMS]}")
-    print(f"  Backtest range : {START_DATE} → today  ({YEARS_BACK} yr)")
+    print(f"  Backtest range : {START_DATE} to today  ({YEARS_BACK} yr)")
     print(f"  Universe       : top {UNIVERSE_SIZE} NSE stocks by market cap")
-    print(f"  Capital/trade  : ₹{CAPITAL_PER_TRADE:,}")
+    print(f"  Capital/trade  : Rs.{CAPITAL_PER_TRADE:,}")
     print(f"  Result size    : top {TOP_N_RESULT} stocks")
     print(f"  Run date       : {DT}")
-    print(f"{'═'*60}\n")
+    print(f"{'='*60}\n")
 
-    t0 = datetime.now()
-    print(f"  Script started : {_ts()}\n")
+    t0   = datetime.now()
+    ckpt = _ckpt_load()
 
-    # ── Step 1: Universe ──────────────────────────────────────────────────
-    universe = step1_get_universe(UNIVERSE_SIZE)
+    # Derive the true resumable step from what data is actually present in
+    # the checkpoint — guards against stale files written by older versions.
+    def _effective_last(ckpt: dict) -> int:
+        if ckpt.get('top200'):   return 3
+        if ckpt.get('all_rows'): return 2
+        if ckpt.get('universe'): return 1
+        return 0
 
-    # ── Step 2: Backtest ──────────────────────────────────────────────────
-    all_rows = step2_run_backtest(universe)
-    if not all_rows:
-        sys.exit("ERROR :: No backtest results — check internet connection.")
+    last = _effective_last(ckpt)
+    # Also respect step 4 completion flag
+    if ckpt.get('last_completed_step', 0) >= 4 and OUTPUT_SIGNALS_DATED.exists():
+        last = 4
 
-    # ── Step 3: Rank ──────────────────────────────────────────────────────
-    top_df = step3_rank(all_rows)
+    if last > 0:
+        print(f"  [checkpoint] Resuming — steps 1–{last} already done, starting from STEP {last + 1}\n")
+    else:
+        print(f"  Script started : {_ts()}\n")
 
-    # ── Step 4: Green-flip scan ───────────────────────────────────────────
-    step4_find_green(top_df['ticker'].tolist(), top_df)
+    # ── STEP 1: Universe ──────────────────────────────────────────────────
+    if last >= 1 and ckpt.get('universe'):
+        print(f"  [checkpoint] STEP 1 done — universe loaded from checkpoint")
+        universe = ckpt['universe']
+    else:
+        universe = step1_get_universe(UNIVERSE_SIZE)
+        _ckpt_save({**ckpt, 'last_completed_step': 1, 'universe': universe})
+
+    # ── STEP 2: Backtest ──────────────────────────────────────────────────
+    if last >= 2 and ckpt.get('all_rows'):
+        print(f"  [checkpoint] STEP 2 done — backtest rows loaded from checkpoint")
+        all_rows = ckpt['all_rows']
+    else:
+        all_rows = step2_run_backtest(universe)
+        if not all_rows:
+            sys.exit("ERROR :: No backtest results — check internet connection.")
+        _ckpt_save({**ckpt, 'last_completed_step': 2, 'all_rows': all_rows})
+
+    # ── STEP 3: Rank ──────────────────────────────────────────────────────
+    if last >= 3 and ckpt.get('top200'):
+        print(f"  [checkpoint] STEP 3 done — top200 loaded from checkpoint")
+        top_df = pd.DataFrame(ckpt['top200'])
+    else:
+        top_df = step3_rank(all_rows)
+        _ckpt_save({**ckpt, 'last_completed_step': 3,
+                    'top200': top_df.reset_index().to_dict('records')})
+
+    # ── STEP 4: Green-flip scan ───────────────────────────────────────────
+    if last >= 4 and OUTPUT_SIGNALS_DATED.exists():
+        print(f"  [checkpoint] STEP 4 done — signals already saved for today.")
+    else:
+        step4_find_green(top_df['ticker'].tolist(), top_df)
+        _ckpt_save({**ckpt, 'last_completed_step': 4})
 
     elapsed = round((datetime.now() - t0).total_seconds() / 60, 1)
-    print(f"{'═'*60}")
+    print(f"{'='*60}")
     print(f"  Script finished : {_ts()}")
     print(f"  Total elapsed   : {elapsed} min")
-    print(f"{'═'*60}\n")
+    print(f"{'='*60}\n")
+
+    # Clear checkpoint only after full successful run
+    _ckpt_clear()
+
 
 # ---------------------------------------------------------------------------
-# Git helper
+# Git helpers
 # ---------------------------------------------------------------------------
-def git_activity():
+def git_pull_activity():
+    print("INFO  :: Pulling latest changes from git")
+    subprocess.run(["git", "pull"], cwd=str(ROOT), check=False)
+
+def git_push_activity():
     print("INFO  :: Pushing changes to git")
-    subprocess.run(["git", "add", "."],                              cwd=str(ROOT), check=False)
-    subprocess.run(["git", "commit", "-m", f"Data update {DT}"],     cwd=str(ROOT), check=False)
-    subprocess.run(["git", "push"],                                  cwd=str(ROOT), check=False)
+    subprocess.run(["git", "add", "."],                           cwd=str(ROOT), check=False)
+    subprocess.run(["git", "commit", "-m", f"Data update {DT}"], cwd=str(ROOT), check=False)
+    subprocess.run(["git", "push"],                               cwd=str(ROOT), check=False)
+
 
 if __name__ == "__main__":
-    #main()
-    git_activity()
+    git_pull_activity()
+    main()
+    git_push_activity()

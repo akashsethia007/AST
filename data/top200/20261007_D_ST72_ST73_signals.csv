@@ -1,0 +1,5 @@
+rank,ticker,date,st_config,flip_date,close_price,st_value,ema_50,ema_200,above_ema50,above_ema200,above_both,confirmed_all_configs,pct_return,total_pnl
+1,ATLANTAELE,20261007,ST72,2026-10-05,1869.3,1736.66,1718.83,1495.77,True,True,True,True,85.74,8574.4
+2,ATLANTAELE,20261007,ST73,2026-10-05,1869.3,1648.76,1718.83,1495.77,True,True,True,True,85.74,8574.4
+3,AMANTA,20261007,ST72,2026-10-05,197.68,186.47,183.06,149.51,True,True,True,True,57.83,5783.43
+4,AMANTA,20261007,ST73,2026-10-05,197.68,180.98,183.06,149.51,True,True,True,True,57.83,5783.43

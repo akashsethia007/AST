@@ -1,5 +1,12 @@
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
+# Ensure the project root (parent of Code/) is on sys.path so `utils` is importable
+# regardless of which directory the script is launched from.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 import logging
 import subprocess
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -43,7 +50,7 @@ PATH_IND_SIGNALS   = ROOT / "indicator_signals"     / f"{DT}_indicator_signals.c
 
 # How many threads to use for batch processing.
 # Each thread fetches a batch of BATCH_SIZE tickers in one HTTP call.
-_WORKERS = 25
+_WORKERS = 50
 
 
 # ---------------------------------------------------------------------------
