@@ -1,0 +1,5 @@
+rank,ticker,date,st_config,flip_date,close_price,st_value,ema_50,ema_200,above_ema50,above_ema200,above_both,confirmed_all_configs,pct_return,total_pnl
+1,21STCENMGM,20261014,ST73,2026-10-09,43.48,38.11,39.43,39.0,True,True,True,False,1328.96,132896.05
+2,BGRENERGY,20261014,ST72,2026-10-09,286.05,239.89,259.92,288.35,True,False,False,False,621.81,62181.02
+3,BBL,20261014,ST72,2026-10-09,2332.9,2088.22,2274.46,2489.74,True,False,False,False,48.25,4824.53
+4,CUB,20261014,ST72,2026-10-09,231.17,209.64,223.02,211.01,True,True,True,False,35.53,3552.86
