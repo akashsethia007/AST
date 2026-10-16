@@ -1,0 +1,4 @@
+rank,ticker,date,st_config,flip_date,close_price,st_value,ema_50,ema_200,above_ema50,above_ema200,above_both,confirmed_all_configs,pct_return,total_pnl
+1,BIRLAMONEY,20261016,ST72,2026-10-14,114.45,108.61,122.56,131.87,False,False,False,False,65.59,6558.85
+2,CESC,20261016,ST72,2026-10-14,135.85,129.83,144.16,154.81,False,False,False,False,56.02,5602.37
+3,CCL,20261016,ST73,2026-10-14,1085.4,998.54,1083.39,1077.77,True,True,True,False,14.06,1405.72
