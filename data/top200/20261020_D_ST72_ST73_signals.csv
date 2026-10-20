@@ -1,0 +1,4 @@
+rank,ticker,date,st_config,flip_date,close_price,st_value,ema_50,ema_200,above_ema50,above_ema200,above_both,confirmed_all_configs,pct_return,total_pnl
+1,BSE,20261020,ST73,2026-10-15,3363.0,3059.27,3350.05,3316.73,True,True,True,False,184.64,18464.46
+2,BEDMUTHA,20261020,ST72,2026-10-15,111.1,104.34,108.57,111.45,True,False,False,False,30.71,3070.7
+3,BHARTIARTL,20261020,ST73,2026-10-15,1905.0,1748.56,1842.33,1896.42,True,True,True,False,23.74,2374.06
