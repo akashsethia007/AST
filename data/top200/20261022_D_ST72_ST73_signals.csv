@@ -1,0 +1,4 @@
+rank,ticker,date,st_config,flip_date,close_price,st_value,ema_50,ema_200,above_ema50,above_ema200,above_both,confirmed_all_configs,pct_return,total_pnl
+1,BLUECOAST,20261022,ST72,2026-10-19,23.32,18.84,22.95,26.59,True,False,False,False,2210.08,221008.35
+2,CRAFTSMAN,20261022,ST73,2026-10-19,10989.0,10067.48,10593.4,9295.11,True,True,True,False,79.73,7972.56
+3,BANKINDIA,20261022,ST72,2026-10-19,138.04,130.16,137.41,140.66,True,False,False,False,26.19,2619.14
