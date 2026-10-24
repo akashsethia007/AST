@@ -1,0 +1,4 @@
+rank,ticker,date,st_config,flip_date,close_price,st_value,ema_50,ema_200,above_ema50,above_ema200,above_both,confirmed_all_configs,pct_return,total_pnl
+1,ABMINTLLTD,20261024,ST73,2026-10-21,46.85,42.93,46.63,45.6,True,True,True,False,76.46,7645.72
+2,ANANDRATHI,20261024,ST72,2026-10-21,2223.0,2109.47,2132.54,1913.63,True,True,True,False,67.07,6707.25
+3,ADROITINFO,20261024,ST72,2026-10-21,12.83,11.44,11.54,10.35,True,True,True,False,8.63,862.97
