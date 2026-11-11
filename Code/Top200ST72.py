@@ -699,6 +699,7 @@ def git_push_activity():
 
 
 if __name__ == "__main__":
+    print("Here it i")
     git_pull_activity()
-    main()
+    #main()
     git_push_activity()
