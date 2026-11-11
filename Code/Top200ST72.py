@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-python d:\Kiro\AST\Code\Top200ST72.py
+#python d:\Kiro\AST\Code\Top200ST72.py
 Top200ST72.py — Automated Stock Screener
 =========================================
 
