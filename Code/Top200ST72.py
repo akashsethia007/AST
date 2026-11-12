@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-#python d:\Kiro\AST\Code\Top200ST72.py
+# python d:\Kiro\AST\Code\Top200ST72.py
 Top200ST72.py — Automated Stock Screener
 =========================================
 
@@ -702,5 +702,5 @@ def git_push_activity():
 if __name__ == "__main__":
     print("Here it i")
     git_pull_activity()
-    #main()
+    main()
     git_push_activity()
